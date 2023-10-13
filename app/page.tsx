@@ -21,7 +21,7 @@ export default function Home() {
         </div>
       </section>
       <section id="posts">
-        <h1 className="text-2xl font-semibold">Posts</h1>
+        <h1 className="text-2xl font-bold">Posts</h1>
         {allPosts.map((post) => (
           <article key={post._id} className="mt-4">
             <Link
