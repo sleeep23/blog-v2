@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function Twitter() {
   return (
     <Button asChild variant="ghost" size="icon">
-      <Link href="https://twitter.com/sleeep23_">
+      <Link href="https://twitter.com/sleeep23_" target="_blank">
         <svg
           className="h-4 w-4 fill-current"
           fill="none"

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 export default function Github() {
   return (
     <Button asChild variant="ghost" size="icon">
-      <Link href="https://github.com/sleeep23">
+      <Link href="https://github.com/sleeep23" target="_blank">
         <svg viewBox="0 0 438.549 438.549" className="h-4 w-4 fill-current">
           <path
             fill="currentColor"
