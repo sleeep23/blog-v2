@@ -42,8 +42,8 @@ export default function Home() {
                 </p>
               )}
               {post.date && (
-                <p className="text-xs mt-0">
-                  {format(parseISO(post.date), "LLLL d, yyyy")}
+                <p className="text-xs mt-0 text-gray-500">
+                  {format(parseISO(post.date), "yyyy-MM-dd")}
                 </p>
               )}
             </Link>
