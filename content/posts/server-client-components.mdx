@@ -1,195 +1,57 @@
 ---
-title: Server and Client Components
-description: React Server Components allow developers to build applications that span the server and client.
-date: "2023-01-08"
+title: 자바스크립트로 배우는 SICP - 0. 흥미로워 보인다
+description: 기대된다. 책너두 챌린지 시작!
+date: "2023-10-23"
 ---
+## 개요
 
-Until now, trying to style an article, document, or blog post with Tailwind has been a tedious task that required a keen eye for typography and a lot of complex custom CSS.
+처음 이 책을 알게 된 경로는 토스의 오픈스터디 모집 글이었다. 해당 글을 보다가 토스의 프론트엔드 개발자분들은 어떤 책을 공부할까 궁금해서 찾아보았고 그것이 바로 이 책이었다. [참고](https://toss.im/career/toss-study-club?studyId=82236223003)
 
-By default, Tailwind removes all of the default browser styling from paragraphs, headings, lists and more. This ends up being really useful for building application UIs because you spend less time undoing user-agent styles, but when you _really are_ just trying to style some content that came from a rich-text editor in a CMS or a markdown file, it can be surprising and unintuitive.
+## 첫 생각
 
-We get lots of complaints about it actually, with people regularly asking us things like:
+처음 이 책을 보고 든 생각은 “도대체 `SICP` 라는 단어가 무슨 뜻일까?” 였다. SICP 는 Structure and Interpretation of Computer Programs의 약자로 컴퓨터 프로그램의 구조와 해석을 의미한다. 그리고 이 책은 해당 내용을 자바스크립트를 이용하여 보여준다.
 
-> Why is Tailwind removing the default styles on my `h1` elements? How do I disable this? What do you mean I lose all the other base styles too?
-> We hear you, but we're not convinced that simply disabling our base styles is what you really want. You don't want to have to remove annoying margins every time you use a `p` element in a piece of your dashboard UI. And I doubt you really want your blog posts to use the user-agent styles either — you want them to look _awesome_, not awful.
+과거에는 이 책이 스킴(scheme)이라는 언어로 작성되었다고 한다. 해당 언어는 함수형 프로그래밍의 조상격인 LISP의 방언이다. 그리고, 현재는 이를 자바스크립트로 완전히 재작성하는 과정을 거쳐서 나온 것이 바로 이 책이다.
 
-The `@tailwindcss/typography` plugin is our attempt to give you what you _actually_ want, without any of the downsides of doing something stupid like disabling our base styles.
+## 전반적인 흐름
 
-It adds a new `prose` class that you can slap on any block of vanilla HTML content and turn it into a beautiful, well-formatted document:
+이제 입에 넣기 전 어떤 내용들로 구성되어 있는지 맛보기로 훑어보았다. 구성은 크게 다음과 같은 섹션들로 나뉜다.
 
-```html
-<article class="prose">
-  <h1>Garlic bread with cheese: What the science tells us</h1>
-  <p>
-    For years parents have espoused the health benefits of eating garlic bread
-    with cheese to their children, with the food earning such an iconic status
-    in our culture that kids will often dress up as warm, cheesy loaf for
-    Halloween.
-  </p>
-  <p>
-    But a recent study shows that the celebrated appetizer may be linked to a
-    series of rabies cases springing up around the country.
-  </p>
-</article>
-```
+1. 함수를 이용한 추상화
+2. 데이터를 이용한 추상화
+3. 모듈성, 객체, 상태
+4. 메타언어적 추상화
+5. 레지스터 기계를 이용한 계산
 
-For more information about how to use the plugin and the features it includes, [read the documentation](https://github.com/tailwindcss/typography/blob/master/README.md).
+목차를 보면 `추상화` 라는 단어에 매우 집중하고 있으며 이를 함수, 데이터, 환경과 상태의 관점에서 매우 자세하게 소개하고 있다.
 
----
+함수적 추상화의 경우는 평소 개발을 할 때 필요를 느끼던 영역이기에 직관적으로 어떤 내용을 다룰지 잘 다가왔다. 그리고 내가 생각했듯 “**반복적인 수행을 하는 기능을 단순한 함수로 작성 → 복합적인 기능을 수행하는 함수를 단순한 함수의 조합으로 작성**”의 과정에서 자바스크립트의 언어적 특성과 관련지어 수행단계 및 관련 개념을 세부적으로 다루고 있다.
 
-## What to expect from here on out
+하지만, 이외의 부분들은 쉽게 어떤 부분이라고 정의하기에 어려운 부분들로 이루어져 있었다. 아무래도 읽어보지 않으면 쉽게 예측할 수 없을 것 같다는 생각과 동시에 너무 읽어보고 싶다는 충동이 든다.
 
-What follows from here is just a bunch of absolute nonsense I've written to dogfood the plugin itself. It includes every sensible typographic element I could think of, like **bold text**, unordered lists, ordered lists, code blocks, block quotes, _and even italics_.
+## 흥미로웠던 점
 
-It's important to cover all of these use cases for a few reasons:
+개발을 하다보면 매번 내 코드가 별로 같고, 같은 역할을 하는 코드지만 재작성을 몇시간이나 몇일에 걸쳐서 추상화하려는 노력을 하게된다. 그리고 이러한 사람의 행동을 이 책에서는 아래와 같이 설명하고 있다.
 
-1.  We want everything to look good out of the box.
-2.  Really just the first reason, that's the whole point of the plugin.
-3.  Here's a third pretend reason though a list with three items looks more realistic than a list with two items.
+> 이 책은 인간의 마음(정신), 컴퓨터 프로그램들의 집합, 그리고 컴퓨터 자체라는 세 가지 측면에 초점을 두고 내용을 전달한다. 모든 컴퓨터 프로그램은 물리적 또는 정신적 과정에 대한 하나의 모형(model)이 우리 마음속에서 부화한 것이다. 인간의 경험과 사고에서 생겨난 그러한 과정(process)은 그 수가 엄청나게 많은 뿐만 아니라 대단히 복잡하다 보니 한 번에 오직 일부만 이해할 수 있다. 그런 과정을 컴퓨터 프로그램으로 만족스럽게 모형화(modeling)할 수 있는 경우는 드물다. [18쪽]
+>
 
-Now we're going to try out another header style.
+> 그래서 비록 우리가 이산적인 기호들의 집합과 연동된 함수들의 모자이크를 세심하게 만들어서 프로그램을 구축한다고 해도 프로그램은 계속해서 진화한다. 모형에 대한 우리의 지각(perception)이 심화, 확대, 일반화됨에 따라 우리는 계속해서 프로그램을 수정한다. 그러한 수정 과정은 모형이 우리가 확립하려고 애쓰는 또 다른 모형 안의 준안정적인(metastable) 자리에 안착해서야 끝난다. [18쪽]
+>
 
-### Typography should be easy
+또한, 이 책이 맘에 들었던 것은 프로그래머를 마법사 또는 예술가처럼 보는 시선이 재밌었다.
 
-So that's a header for you — with any luck if we've done our job correctly that will look pretty reasonable.
+> 컴퓨터 프로그래밍과 연관된 기쁨과 흥분은 프로그램의 형태로 표현된 메커니즘이 우리 마음속과 컴퓨터에서 끊임없이 전개되고 그로부터 지각이 폭발적으로 생겨나는 데에서 비롯한다. 예술이 우리의 꿈을 해석한다면, 컴퓨터는 우리의 꿈을 프로그램의 형태로 실행한다! [18쪽]
+>
 
-Something a wise person once told me about typography is:
+위 부분이 너무 맘에 들었다. 어떻게 보면 내가 개발을 좋아하는 이유에 대해서 명쾌하게 설명해주고 있는 부분이었다. ~~나중에 면접 때 써먹어볼까..?~~
 
-> Typography is pretty important if you don't want your stuff to look like trash. Make it good then it won't be bad.
+## 다짐
 
-It's probably important that images look okay here by default as well:
+이 책을 읽기 위해 “책너두” 라는 챌린지를 참여했다. 하지만, 챌린지 수행을 위해 책을 읽는 것이 아닌 책을 읽고싶되 챌린지는 꾸준함을 위한 곁들임으로 생각하고 다짐했다. 부디 이 책에 대한 지금과 같은 흥미가 책을 읽은 후까지 이어지길 하는 바램이다.
 
-<Image src="/blog-post-4.jpg" width="718" height="404" alt="Image" />
+### 참고
 
-Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.
+아래는 위 책의 원문 내용이 있는 사이트이다. 책을 읽으면서 관련된 내용을 참고해보면 좋을 것 같다.
 
-Now I'm going to show you an example of an unordered list to make sure that looks good, too:
-
-- So here is the first item in this list.
-- In this example we're keeping the items short.
-- Later, we'll use longer, more complex list items.
-
-And that's the end of this section.
-
-## What if we stack headings?
-
-### We should make sure that looks good, too.
-
-Sometimes you have headings directly underneath each other. In those cases you often have to undo the top margin on the second heading because it usually looks better for the headings to be closer together than a paragraph followed by a heading should be.
-
-### When a heading comes after a paragraph …
-
-When a heading comes after a paragraph, we need a bit more space, like I already mentioned above. Now let's see what a more complex list would look like.
-
-- **I often do this thing where list items have headings.**
-
-  For some reason I think this looks cool which is unfortunate because it's pretty annoying to get the styles right.
-
-  I often have two or three paragraphs in these list items, too, so the hard part is getting the spacing between the paragraphs, list item heading, and separate list items to all make sense. Pretty tough honestly, you could make a strong argument that you just shouldn't write this way.
-
-- **Since this is a list, I need at least two items.**
-
-  I explained what I'm doing already in the previous list item, but a list wouldn't be a list if it only had one item, and we really want this to look realistic. That's why I've added this second list item so I actually have something to look at when writing the styles.
-
-- **It's not a bad idea to add a third item either.**
-
-  I think it probably would've been fine to just use two items but three is definitely not worse, and since I seem to be having no trouble making up arbitrary things to type, I might as well include it.
-
-After this sort of list I usually have a closing statement or paragraph, because it kinda looks weird jumping right to a heading.
-
-## Code should look okay by default.
-
-I think most people are going to use [highlight.js](https://highlightjs.org/) or [Prism](https://prismjs.com/) or something if they want to style their code blocks but it wouldn't hurt to make them look _okay_ out of the box, even with no syntax highlighting.
-
-Here's what a default `tailwind.config.js` file looks like at the time of writing:
-
-```js
-module.exports = {
-  purge: [],
-  theme: {
-    extend: {},
-  },
-  variants: {},
-  plugins: [],
-}
-```
-
-Hopefully that looks good enough to you.
-
-### What about nested lists?
-
-Nested lists basically always look bad which is why editors like Medium don't even let you do it, but I guess since some of you goofballs are going to do it we have to carry the burden of at least making it work.
-
-1.  **Nested lists are rarely a good idea.**
-    - You might feel like you are being really "organized" or something but you are just creating a gross shape on the screen that is hard to read.
-    - Nested navigation in UIs is a bad idea too, keep things as flat as possible.
-    - Nesting tons of folders in your source code is also not helpful.
-2.  **Since we need to have more items, here's another one.**
-    - I'm not sure if we'll bother styling more than two levels deep.
-    - Two is already too much, three is guaranteed to be a bad idea.
-    - If you nest four levels deep you belong in prison.
-3.  **Two items isn't really a list, three is good though.**
-    - Again please don't nest lists if you want people to actually read your content.
-    - Nobody wants to look at this.
-    - I'm upset that we even have to bother styling this.
-
-The most annoying thing about lists in Markdown is that `<li>` elements aren't given a child `<p>` tag unless there are multiple paragraphs in the list item. That means I have to worry about styling that annoying situation too.
-
-- **For example, here's another nested list.**
-
-  But this time with a second paragraph.
-
-  - These list items won't have `<p>` tags
-  - Because they are only one line each
-
-- **But in this second top-level list item, they will.**
-
-  This is especially annoying because of the spacing on this paragraph.
-
-  - As you can see here, because I've added a second line, this list item now has a `<p>` tag.
-
-    This is the second line I'm talking about by the way.
-
-  - Finally here's another list item so it's more like a list.
-
-- A closing list item, but with no nested list, because why not?
-
-And finally a sentence to close off this section.
-
-## There are other elements we need to style
-
-I almost forgot to mention links, like [this link to the Tailwind CSS website](https://tailwindcss.com). We almost made them blue but that's so yesterday, so we went with dark gray, feels edgier.
-
-We even included table styles, check it out:
-
-| Wrestler                | Origin       | Finisher           |
-| ----------------------- | ------------ | ------------------ |
-| Bret "The Hitman" Hart  | Calgary, AB  | Sharpshooter       |
-| Stone Cold Steve Austin | Austin, TX   | Stone Cold Stunner |
-| Randy Savage            | Sarasota, FL | Elbow Drop         |
-| Vader                   | Boulder, CO  | Vader Bomb         |
-| Razor Ramon             | Chuluota, FL | Razor's Edge       |
-
-We also need to make sure inline code looks good, like if I wanted to talk about `<span>` elements or tell you the good news about `@tailwindcss/typography`.
-
-### Sometimes I even use `code` in headings
-
-Even though it's probably a bad idea, and historically I've had a hard time making it look good. This _"wrap the code blocks in backticks"_ trick works pretty well though really.
-
-Another thing I've done in the past is put a `code` tag inside of a link, like if I wanted to tell you about the [`tailwindcss/docs`](https://github.com/tailwindcss/docs) repository. I don't love that there is an underline below the backticks but it is absolutely not worth the madness it would require to avoid it.
-
-#### We haven't used an `h4` yet
-
-But now we have. Please don't use `h5` or `h6` in your content, Medium only supports two heading levels for a reason, you animals. I honestly considered using a `before` pseudo-element to scream at you if you use an `h5` or `h6`.
-
-We don't style them at all out of the box because `h4` elements are already so small that they are the same size as the body copy. What are we supposed to do with an `h5`, make it _smaller_ than the body copy? No thanks.
-
-### We still need to think about stacked headings though.
-
-#### Let's make sure we don't screw that up with `h4` elements, either.
-
-Phew, with any luck we have styled the headings above this text and they look pretty good.
-
-Let's add a closing paragraph here so things end with a decently sized block of text. I can't explain why I want things to end that way but I have to assume it's because I think things will look weird or unbalanced if there is a heading too close to the end of the document.
-
-What I've written here is probably long enough, but adding this final sentence can't hurt.
+[Source Academy](https://sourceacademy.org/sicpjs/foreword02)
