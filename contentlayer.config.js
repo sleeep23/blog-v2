@@ -42,9 +42,21 @@ export const Post = defineDocumentType(() => ({
     description: {
       type: "string",
     },
-    date: {
+    createdAt: {
       type: "date",
       required: true,
+    },
+    category: {
+      type: "string",
+      required: true,
+    },
+    thumbnail: {
+      type: "string",
+      required: false,
+    },
+    timesToRead: {
+      type: "number",
+      required: false,
     },
   },
   computedFields,

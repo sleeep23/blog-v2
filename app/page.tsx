@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { allPosts } from "@/.contentlayer/generated";
-import { compareDesc, format, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
+import { ClockIcon } from "@radix-ui/react-icons";
+import { Badge } from "@/components/ui/badge";
 
 export default function Home() {
   return (
@@ -41,9 +43,16 @@ export default function Home() {
                   {post.description}
                 </p>
               )}
-              {post.date && (
-                <p className="text-xs mt-0 text-gray-500">
-                  {format(parseISO(post.date), "yyyy-MM-dd")}
+              {post.createdAt && (
+                <p className="text-xs mt-0 text-gray-500 flex align-middle gap-2">
+                  <span>{format(parseISO(post.createdAt), "yyyy-MM-dd")}</span>|{" "}
+                  <span>{post.category}</span> |{" "}
+                  <span className="flex align-middle gap-1">
+                    <span className="flex flex-col justify-center">
+                      <ClockIcon />
+                    </span>
+                    <span>{post.timesToRead}min</span>
+                  </span>
                 </p>
               )}
             </Link>
