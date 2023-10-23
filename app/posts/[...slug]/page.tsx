@@ -64,8 +64,8 @@ export default async function PostPage({ params }: PostProps) {
         <span>{post.category}</span> |{" "}
         <span className="flex flex-col justify-center">
           <ClockIcon />
-          {post.timesToRead}min
         </span>
+        <span>{post.timesToRead}min</span>
       </p>
       <hr className="my-4" />
       <Mdx code={post.body.code} />
