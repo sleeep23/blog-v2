@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import { Mdx } from "@/components/mdx-components";
 import { format, parseISO } from "date-fns";
 import { ClockIcon } from "@radix-ui/react-icons";
+import Image from "next/image";
 
 interface PostProps {
   params: {
@@ -52,10 +53,14 @@ export default async function PostPage({ params }: PostProps) {
   }
 
   return (
-    <article className="py-6 prose dark:prose-invert leading-relaxed">
-      <h1>{post.title}</h1>
+    <article className="py-6 prose dark:prose-invert leading-relaxed prose-h1:text-2xl prose-a:break-all break-keep">
+      <h2>{post.title}</h2>
+      <p>{post.thumbnail}</p>
+      {/*{post.thumbnail && (*/}
+
+      {/*)}*/}
       {post.description && (
-        <p className="text-xl text-slate-700 dark:text-slate-200">
+        <p className="text-sm text-slate-700 dark:text-slate-200">
           {post.description}
         </p>
       )}

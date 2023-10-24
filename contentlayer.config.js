@@ -1,6 +1,8 @@
 import { defineDocumentType, makeSource } from "contentlayer/source-files";
 import highlight from "rehype-highlight";
 import rehypePrettyCode from "rehype-pretty-code";
+import rehypeSlug from "rehype-slug";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
 
 /** @type {import('contentlayer/source-files').ComputedFields} */
 const computedFields = {
@@ -50,7 +52,7 @@ export const Post = defineDocumentType(() => ({
       type: "string",
       required: true,
     },
-    thumbnail: {
+    thumbnailURL: {
       type: "string",
       required: false,
     },
@@ -68,10 +70,19 @@ export default makeSource({
   mdx: {
     remarkPlugins: [],
     rehypePlugins: [
+      rehypeSlug,
       [
         rehypePrettyCode,
         {
-          theme: "github-dark", // 코드작성시 적용할 테마
+          theme: "material-theme-palenight",
+        },
+      ],
+      [
+        rehypeAutolinkHeadings,
+        {
+          properties: {
+            className: ["anchor"],
+          },
         },
       ],
       highlight,

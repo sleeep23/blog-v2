@@ -31,7 +31,7 @@ export default function Home() {
       </section>
       <section id="posts">
         <h3 className="text-2xl font-bold font-mono">Posts</h3>
-        {allPosts.map((post) => (
+        {allPosts.reverse().map((post) => (
           <article key={post._id} className="mt-4">
             <Link
               href={post.slug}
