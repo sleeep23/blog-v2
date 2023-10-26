@@ -5,7 +5,6 @@ import { Metadata } from "next";
 import { Mdx } from "@/components/mdx-components";
 import { format, parseISO } from "date-fns";
 import { ClockIcon } from "@radix-ui/react-icons";
-import Image from "next/image";
 
 interface PostProps {
   params: {

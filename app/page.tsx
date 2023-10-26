@@ -3,7 +3,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { allPosts } from "@/.contentlayer/generated";
 import { format, parseISO } from "date-fns";
 import { ClockIcon } from "@radix-ui/react-icons";
-import { Badge } from "@/components/ui/badge";
 
 export default function Home() {
   return (
