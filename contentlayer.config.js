@@ -74,7 +74,7 @@ export default makeSource({
       [
         rehypePrettyCode,
         {
-          theme: "material-theme-palenight",
+          theme: "github-dark",
         },
       ],
       [
