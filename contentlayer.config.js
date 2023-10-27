@@ -3,6 +3,8 @@ import highlight from "rehype-highlight";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
 
 /** @type {import('contentlayer/source-files').ComputedFields} */
 const computedFields = {
@@ -68,9 +70,10 @@ export default makeSource({
   contentDirPath: "./content",
   documentTypes: [Post, Page],
   mdx: {
-    remarkPlugins: [],
+    remarkPlugins: [remarkMath],
     rehypePlugins: [
       rehypeSlug,
+      rehypeKatex,
       [
         rehypePrettyCode,
         {
