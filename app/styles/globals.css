@@ -73,4 +73,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  li > code, p > code {
+    @apply bg-background rounded border-[1px] py-0.5 px-1 text-sm before:hidden after:hidden;
+  }
+  aside {
+    @apply bg-amber-50 bg-opacity-70 border-[1px] border-solid border-amber-400 px-6 rounded-2xl dark:border-amber-600 dark:bg-amber-900 dark:bg-opacity-50 ;
+  }
 }
