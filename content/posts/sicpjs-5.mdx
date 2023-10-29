@@ -170,7 +170,7 @@ fermat_test(97);
 
 ```jsx
 function square(x) {
-		return x * x
+    return x * x
 }
 ```
 
@@ -187,8 +187,8 @@ function square(x) {
 ```jsx
 function sum_integers(a, b) {
 		return a > b
-					 ? 0
-					 : a + sum_integers(a + 1, b);
+               ? 0
+               : a + sum_integers(a + 1, b);
 }
 ```
 
@@ -228,9 +228,9 @@ function pi_sum(a, b) {
 
 ```jsx
 function 이름(a, b) {
-		return a > b
-					 ? 0
-					 : 현재_항 (a) + 이름 (다음_항(a), b)
+    return a > b
+           ? 0
+           : 현재_항 (a) + 이름 (다음_항(a), b)
 }
 ```
 
@@ -350,8 +350,8 @@ accumulate(combiner, null_value, term, a, next, b)
 ```jsx
 function acc_recursive(combiner, null_value, term, a, next, b) {
 	return a > b
-				 ? null_value
-				 : combiner(term(a), acc_recursive(combiner, null_value, term, next(a), next, b));
+           ? null_value
+           : combiner(term(a), acc_recursive(combiner, null_value, term, next(a), next, b));
 }
 ```
 
@@ -370,8 +370,8 @@ function acc_recursive(combiner, null_value, term, a, next, b) {
 function acc_iterative(combiner, null_value, term, a, next, b) {
 	function iter(a, result) {
 		return a > b
-					 ? result
-					 : iter(next(a), combiner(term(a), result));
+               ? result
+               : iter(next(a), combiner(term(a), result));
 	}
 	return iter(a, null_value);
 }
@@ -413,10 +413,10 @@ filtered_accumulate(combiner, null_value, term, a, next, b, filter)
 ```jsx
 function filtered_accumulate(combiner, null_value, term, a, next, b, filter) {
 	return a > b
-				 ? null_value
-				 : filter(a)
-				 ? combiner(term(a), filtered_accumulate(combiner, null_value, term, next(a), next, b, filter))
-         : filtered_accumulate(combiner, null_value, term, next(a), next, b, filter);
+           ? null_value
+           : filter(a)
+           ? combiner(term(a), filtered_accumulate(combiner, null_value, term, next(a), next, b, filter))
+           : filtered_accumulate(combiner, null_value, term, next(a), next, b, filter);
 }
 ```
 
