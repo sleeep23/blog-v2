@@ -1,0 +1,220 @@
+---
+title: 노션 블로그 만들기 - React Query? 얜 또 누구야
+description: 노션 블로그에 React Query 적용해본 경험 기록!
+createdAt: "2023-02-25"
+category: 프로젝트
+timesToRead: 6
+---
+개발하다가 상세 라우트에서 매번 노션 페이지를 페칭하는데 시간이 너무 오래 걸린다. 캐싱해두는 방법을 없을까 고민하다가, 여기서 React Query를 알아버렸다..!
+적용해본 결과는 다음과 같다!
+## React Query 적용 전
+
+리액트 쿼리를 적용하기 전에는 매번 라우트의 id 값을 `useMemo` 로 기록해두고 이를 `useEffect` 의 의존성 배열에 등록해두어 id가 바뀔 때마다 페칭하도록 코드를 작성했다!
+
+```tsx
+export const getPost = async (id: string) => {
+  const res = await fetch(`${server}/api/posts/${id}`);
+  return res.json();
+};
+
+export default function SinglePost() {
+  const [post, setPost] = useState<PostContentType | undefined>(undefined);
+  const router = useRouter();
+  const { id } = useMemo(() => {
+    return router.query;
+  }, [router.query]);
+
+  useEffect(() => {
+    const getFn = async () => {
+      if (id) {
+        const content = await getPost(id as string);
+        setPost(() => content);
+      }
+    };
+    getFn();
+  }, [id]);
+
+  return (
+    <ArticleLayout>
+      <section css={sectionStyle}>
+        <h1>{post?.title}</h1>
+        <p>{post?.date}</p>
+        {post && (
+          <Image
+            css={imgStyle}
+            src={post.imgLink as string}
+            alt={post.title}
+            width={700}
+            height={430}
+          />
+        )}
+        {post && <Markdown content={post.content} />}
+      </section>
+    </ArticleLayout>
+  );
+}
+```
+
+- 순수 `useEffect` 문 만을 이용해서 구성한 코드
+
+## React-Query 적용 후
+
+생각보다 리액트 쿼리는 사용하기 되게 쉬웠다! 그냥 `useEffect` 내부의 비동기 api 호출부를 `useQuery`의 매개변수로 전달하면 된다!
+
+```tsx
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+    },
+  },
+});
+
+export default function App({ Component, pageProps }: AppProps) {
+  return (
+    <>
+      <GlobalStyles />
+      <QueryClientProvider client={queryClient}>
+        <Component {...pageProps} />
+      </QueryClientProvider>
+    </>
+  );
+}
+```
+
+- 전역을 `QueryClientProvider` 로 감싼 후 `useQuery` 를 이용하여 data fetching을 진행하면,
+
+```tsx
+export default function Index() {
+  const [cntMenu, setCntMenu] = useState<string>('All');
+  const { isError, isSuccess, isLoading, data, error } = useQuery(
+    ['posts'],
+    fetchPosts,
+    { staleTime: 3000 }
+  );
+
+  if (isLoading) {
+    console.log('Loading posts ...');
+    return (
+      <ArticleLayout>
+        <div>Loading...</div>
+      </ArticleLayout>
+    );
+  }
+
+  if (isError) {
+    console.log('Error : ', error);
+    return (
+      <ArticleLayout>
+        <div>Error...</div>
+      </ArticleLayout>
+    );
+  }
+  const posts = data as PostsType;
+  const menuItems = posts?.map((db) => db.name);
+  return (
+    <ArticleLayout>
+      <PostsMenu setCntMenu={setCntMenu} menuItems={menuItems} />
+      {posts && <Posts cntMenu={cntMenu} data={posts} />}
+    </ArticleLayout>
+  );
+}
+```
+
+정말 눈에 띄게 코드가 줄었다! 게다가 결과 값이 온 여부에 따라서 로딩 상태와 에러상태까지 모두 관리할 수 있다.
+
+## Post - id 페이지에도 적용한 결과
+
+```tsx
+export default function SinglePost() {
+  const [post, setPost] = useState<PostContentType | undefined>(undefined);
+  const router = useRouter();
+  const { id } = useMemo(() => {
+     return router.query;
+   }, [router.query]);
+
+   useEffect(() => {
+     const getFn = async () => {
+       if (id) {
+         const content = await getPost(id as string);
+         setPost(() => content);
+       }
+     };
+     getFn();
+   }, [id]);
+
+  const post = data as PostContentType;
+  return (
+    <ArticleLayout>
+      <section css={sectionStyle}>
+        <h1>{post && post.title}</h1>
+        <p>{post && post.date}</p>
+        {post && (
+          <Image
+            css={imgStyle}
+            src={post.imgLink as string}
+            alt={post.title}
+            width={700}
+            height={430}
+          />
+        )}
+        {post && <Markdown content={post.content} />}
+      </section>
+    </ArticleLayout>
+  );
+}
+```
+위의 페이지도 `useEffect`를 이용하여 데이터를 가져오는 방식이다. 그런데 react-query를 적용한 결과 아래와 같이 변했다.
+
+```tsx
+export default function SinglePost() {
+  const router = useRouter();
+  const postId = router.query.id as string;
+  const { isLoading, isSuccess, isError, data, error } = useQuery(
+    ['single-post', router.query.id],
+    () => fetchSinglePost(postId),
+    { staleTime: 3000 }
+  );
+
+  if (isLoading) {
+    console.log(`Loading post ${postId}...`);
+    return (
+      <ArticleLayout>
+        <div>Loading...</div>
+      </ArticleLayout>
+    );
+  }
+
+  if (isError) {
+    console.log('Error : ', error);
+    return (
+      <ArticleLayout>
+        <div>Error...</div>
+      </ArticleLayout>
+    );
+  }
+  const post = data as PostContentType;
+
+  return (
+    <ArticleLayout>
+      <section css={sectionStyle}>
+        <h1>{post && post.title}</h1>
+        <p>{post && post.date}</p>
+        {post && (
+          <Image
+            css={imgStyle}
+            src={post.imgLink as string}
+            alt={post.title}
+            width={700}
+            height={430}
+          />
+        )}
+        {post && <Markdown content={post.content} />}
+      </section>
+    </ArticleLayout>
+  );
+}
+```
+아우 깔끔해진것봐 🤩
+
+그리고 `React Query` 를 이용한 **Caching**을 진행하다보니 확실히 이미 로딩된 페이지에 대한 로딩 속도가 눈에 띄게 빨라졌다. 기존의 방식은 매번 해당 페이지에 접속시 → GET request를 notion db에 계속 날려서 정보를 가져오는 식이었다. 그런데 갓 리액트 쿼리… 이미 캐싱 해두어서 해당 페이지를 초기 로딩 이후에 들어가면 바로 포스트가 보여진다. 정말 멋지다.
