@@ -1,0 +1,45 @@
+---
+title: 노션 블로그 만들기 - Notion-API 응답시간 개선기 - 2
+description: notion-to-md 이자식이 문제였네
+createdAt: "2023-03-02"
+category: 프로젝트
+timesToRead: 5
+---
+## 엄청난 진전과 롤백
+
+우선 결과부터 얘기하자면 다시 처음이다.
+
+하지만 처음으로 돌아오기까지 여러여러여러여러 과정들을 거쳐왔다…
+
+- Zapier의 적용 -> 될 줄 알았는데, 노션 데이터베이스에 대한 옵션이 없어서 적용 불가능했다...🥲
+- Pipedream의 적용 (Zapier + Code 환경) -> 코드를 재피어 처럼 이용할 수 있다기에 써보려 했지만 사용 방법이 자세하게 나와있지 않아 어려워서 포기했다...😭
+- 내 코드에 console.time() 적용해서 코드 시간 확인하기 -> 그냥 코드에 시간 찍어보면서 어느 부분에서 요청 시간이 오래 걸리는지를 확인해봤다.
+
+### 결론
+
+`notion-to-md` 라이브러리의 적용 시간 : 11.531s
+
+`notion api` 응답 시간 : 11.73s
+
+notion to md 라이브러리의 notion 컨텐츠를 markdown으로 변환하는데 대부분의 시간이 걸렸던 것이다. 즉, SSR도 React Query도, Notion database도 그 어떤 것들도 잘못이 없었다. 애꿏은 노션 디비만 욕 엄청 한 느낌…? 게다가 코드적인 문제도 꽤 있었다.
+
+### 그래서?
+
+우선 `@notionhq/client` 에서 지금까지 가져왔다면, 이를 `notion-client` 로 전환해볼까 한다. 훨씬 빠르게요청이 가는 듯 하다. 사실상 차이는 없겠지만, notion api와 연결해주는 middleware이 겹치는 것은 그리 보기 좋은 코드가 짜여지기 어렵기에 나의 선택은 notion-client으로 넘어갔다.
+
+실제 notion-client는 해당 정보를 바로 `NotionRenderer` 이라는 컴포넌트를 통해서 렌더링 할 수 있는것에 더하여 SSR이나 pdf, image, code 등의 파일까지 모두 건들일 수 있는 좋은 형태를 보여주기에 이를 선택하기로 마음먹었다.
+
+이렇게 되면 사라지는 라이브러리들이
+
+- `@notionhq/client`
+- `react-markdown`
+- `remark-gfm`
+- `prism`
+- `parse-numeric-range`
+- `notion-to-md`
+- `marked`
+- `dompurify`
+
+정도이다. 휘우.. 확 사라지는 구만…! 즐거웠다… 나랑 놀아주느라… ㅠㅠ
+
+일단 이렇게 해봐야겠다.
