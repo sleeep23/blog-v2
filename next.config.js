@@ -10,6 +10,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "sleeep23.notion.site",
       },
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+      },
     ],
   },
 };

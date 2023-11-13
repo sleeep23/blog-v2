@@ -1,0 +1,144 @@
+---
+title: 자바스크립트로 배우는 SICP - 17. 배정과 상태
+description: 배정을 하면 상태가 필요하지요 ~ 배정과 상태 변수에 대해서 알아보자!
+createdAt: "2023-11-10"
+category: 독서
+timesToRead: 12
+---
+오늘은 3장이다! 드디어 기대하던 장이다.
+
+지금까지 알아보았던 함수와 데이터의 추상화는 그 대상이 정적이었다. 예를 들면, 유리수 산술 연산 과정에서 유리수를 만들기 위해 인수를 받았다. 그리고, 받은 인수를 활용하여 사칙연산을 구현하고 추상화 장벽을 세우는 과정들도 다뤄보았다. 그런데, 이 과정 사이에서 유리수의 값이 변했는지에 대해 가만히 생각해보면 기존의 값을 활용할 뿐 어떠한 변화도 없었다.
+
+하지만, 실생활에서 다루는 상황의 데이터는 정적인 경우가 매우 적다.
+
+대규모 프로그램을 구현한다고 가정해보자. 앞서서 다뤄왔듯 새로운 객체나 작용을 도입하기 위해 기존의 프로그램을 크게 뜯어 고치지 않고 연산을 추가하기만 하면 되는 프로그램을 만들기 위해서는 `조직화` 가 매우 잘 이뤄져야 한다. 이러한 조직화에 대한 전략으로 `객체 기반 접근 방식` 과 `스트림 접근 방식(정보의 흐름 중심)` 들이 있는데 이 전략들이 제기하는 문제가 바로 시간에 따라 객체나 그 행동이 변할 수 있다는 것이다.
+
+이렇듯 시스템의 객체들은 시간에 따라 상태가 변화하기에 이에 대응하는 계산적 객체 또한 그에 따라 상태가 변해야 한다. 이는 곧 각 계산적 객체가 실제 객체의 상태를 서술하는 그들만의 지역 상태 변수의 필요성을 제기한다.
+
+<aside>
+    💡 간단히 말해서 지역변수가 필요한 경우에 대해서 다룬다는 것이다.
+
+    책에서는 이와 관련해 은행의 예시를 들고 있다.
+
+    은행에 100만큼 돈을 맡겼다고 가정하자. 그리고 `withdraw` 라는 함수를 이용하여 돈을 25씩 빼온다고 한다면, 해당 함수의 첫 호출 시에는 은행에 75만큼, 두 번 호출되었을 경우에 50만큼 돈이 남아있을 것이다. 여기서 짚고 넘어가야 할 부분은 은행에 남아있는 상태에 대한 기록이 이뤄지는 연산이 진행된다는 점이다.
+
+</aside>
+
+`withdraw` 를 구현하는 아래의 코드를 살펴보자.
+
+```jsx
+function make_withdraw_balance_100() {
+    let balance = 100;
+    return amount => {
+               if (balance >= amount) {
+                   balance = balance - amount;
+                   return balance;
+               } else {
+                   return "Insufficient funds";
+               }
+           };
+}
+```
+
+위 코드는 `balance` 라는 잔액을 확인하는 지역변수를 함수 내에 선언하고 반환하여 함수가 호출될 때마다 해당 값을 변화시키는 역할을 수행하도록 구현한 `withdraw` 함수이다.
+
+<aside>
+    💡 2장까지 다뤘던 코드 내에서는 그 어떤 위치에서도 `배정(assignment)` 연산자 즉, `=` 에 대한 언급이 없었다.(변수 선언의 `=` 을 의미하는 것이 아니다.) 이 배정 연산이 적용되었다는 것 자체가 계산적 객체의 상태가 시간에 따라 변화한다는 의미를 내포한다.
+
+</aside>
+
+이와 유사하게 아래와 같이 작성할 수도 있다.
+
+```jsx
+function make_withdraw(balance) {
+    return amount => {
+               if (balance >= amount) {
+                   balance = balance - amount;
+                   return balance;
+               } else {
+                   return "Insufficient funds";
+               }
+           };
+}
+```
+
+앞선 코드와 차이점은 함수 내 지역변수를 이용하지 않고, 매개변수를 활용한다는 것이다.
+
+그럼 “배정 연산자의 도입 / 시간에 따라 상태가 변하는 변수의 도입” 은 어떤 영향을 끼칠까?
+
+우선 앞서 1장에서 함수 치환 모형으로 **자바스크립트는 인수 우선 평가 방식**을 이용한다고 소개했었다. 하지만, 이러한 치환 모형은 배정 연산의 도입 이후에는 온전히 적용하여 해석하기 어렵다는 것이다. (이에 대한 이유로는 18일차 범위에 등장한다! 간단히 말해 인수 우선 평가 방식으로 함수를 평가한다면, 배정 연산이 이뤄지는 부분과 반환하는 부분에서 동시에 인수 평가가 진행되기에 배정 연산이 완료되어 변화한 상태를 반환해야 하는 경우에는 문제가 발생한다는 것을 짐작할 수 있다.)
+
+이러한 배정 연산의 도입은 그럼 어떤 이득을 불러올까?
+
+이는 시스템을 지역 상태를 가진 객체들의 컬렉션이라는 관점으로 보게 하여 모듈식 설계를 유지하는 데 큰 도움을 준다. 책에서는 이에 대한 예시로 몬테카를로 시뮬레이션을 구현한 코드를 소개하고 있다. 몬테카를로 시뮬레이션에 대한 상세한 설명은 [여기](https://namu.wiki/w/%EB%AA%AC%ED%85%8C%20%EC%B9%B4%EB%A5%BC%EB%A1%9C%20%EB%B0%A9%EB%B2%95)를 참고하자.
+
+우선 랜덤한 수를 생성하는 `rand` 함수를 작성하면 다음과 같다.
+
+```jsx
+function make_rand() {
+   let x = random_init;
+   return () => {
+              x = rand_update(x);
+              return x;
+          };
+}
+const rand = make_rand();
+```
+
+왼쪽 코드는 배정을 이용하는 `rand` 함수를 이용하여 작성한 몬테카를로 방법에 대한 코드이고, 오른쪽은 `rand` 를 이용하지 않는 대신 함수 내에서 직접 `rand_update` 라는 함수를 통해 난수를 생성하고 지역 변수로 지정하여 이를 이용한다.
+
+```jsx
+function estimate_pi(trials) {
+    return math_sqrt(6 / monte_carlo(trials, dirichlet_test));
+}
+
+function dirichlet_test() {
+    return gcd(rand(), rand()) === 1;
+}
+
+function monte_carlo(trials, experiment) {
+    function iter(trials_remaining, trials_passed) {
+        return trials_remaining === 0
+               ? trials_passed / trials
+               : experiment()
+               ? iter(trials_remaining - 1, trials_passed + 1)
+               : iter(trials_remaining - 1, trials_passed);
+    }
+    return iter(trials, 0);
+}
+```
+
+```jsx
+function estimate_pi(trials) {
+    return math_sqrt(6 / random_gcd_test(trials, random_init));
+}
+
+function random_gcd_test(trials, initial_x) {
+    function iter(trials_remaining, trials_passed, x) {
+        const x1 = rand_update(x);
+        const x2 = rand_update(x1);
+        return trials_remaining === 0
+               ? trials_passed / trials
+               : gcd(x1, x2) === 1
+               ? iter(trials_remaining - 1, trials_passed + 1, x2)
+               : iter(trials_remaining - 1, trials_passed, x2);
+    }
+    return iter(trials, 0, initial_x);
+}
+```
+
+위 두 코드를 비교해보자. 가장 큰 차이점을 고르자면, 왼쪽은 `iter` 함수 내부에서 지역변수를 선언하고 있지 않지만 오른쪽에서는 선언을 하고 있다는 점이다. 그럼 이게 어떤 문제를 일으키는 것일까?
+
+- 오른쪽 코드의 실험 결과를 누산하는 코드가 복잡해졌다.
+- 오른쪽 코드에서는 `estimate_pi` 라는 함수에서 난수의 초기 값을 제공해줘야 한다.
+- 오른쪽 코드의 몬테카를로 방법은 다른 곳에서 이용할 수 있도록 격리하기가 어렵다.
+
+책의 내용을 빌리자면,
+
+> 이 몬테카를로 시뮬레이션 예제가 보여주는 현상을, “어떤 복잡한 계산적 과정의 한 구성요소에서 볼 때, 다른 구성요소들은 시간에 따라 변하는 것처럼 보인다”라고 일반화할 수 있겠다.
+>
+
+> 다른 말로 하면, 시스템의 구성요소들에는 숨겨진 시변 지역 상태가 있다. 이러한 분해 방식이 반영된 구조를 가진 컴퓨터 프로그램을 작성하려면, 계산적 객체(은행 계좌나 난수 발생기 등)의 행동이 시간에 따라 변하게 만들어야 한다.
+>
+
+크으 오늘도 좋은 내용이었다. 이제 2장까지 다뤘던 함수들은 정적인 상태로 수학함수와 연관짓기 좋은 예시였지만, 상태가 변화하는 3장부터는 또 새로운 멘탈 모델을 세워가는게 너무나 좋은 관점을 제시해준다고 생각한다. 한잔해 ~ 🍻

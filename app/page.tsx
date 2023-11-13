@@ -1,8 +1,16 @@
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { allPosts } from "@/.contentlayer/generated";
-import { format, parseISO } from "date-fns";
+import { allPosts, Post } from "@/.contentlayer/generated";
+import { format, getTime, parseISO } from "date-fns";
 import { ClockIcon } from "@radix-ui/react-icons";
+
+const alignedByIsoString = (posts: Post[]) => {
+  return [...posts].sort((a, b) => {
+    const timeA = getTime(parseISO(a.createdAt));
+    const timeB = getTime(parseISO(b.createdAt));
+    return timeB - timeA;
+  });
+};
 
 export default function Home() {
   return (
@@ -30,7 +38,7 @@ export default function Home() {
       </section>
       <section id="posts">
         <h3 className="text-2xl font-bold font-mono">Posts</h3>
-        {allPosts.reverse().map((post) => (
+        {alignedByIsoString(allPosts).map((post) => (
           <article key={post._id} className="mt-4">
             <Link
               href={post.slug}
