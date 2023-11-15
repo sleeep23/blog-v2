@@ -1,0 +1,90 @@
+---
+title: 자바스크립트로 배우는 SICP - 19. 함수와 바인딩 - (2)
+description: 프레임, 바인딩, 프레임, 바인딩...
+createdAt: "2023-11-13"
+category: 독서
+timesToRead: 8
+---
+
+오늘도 함수 평가와 환경 모델에 관련된 내용이다!
+
+바로 코드부터 봐보자!
+
+```jsx
+function square(x) {
+    return x * x;
+}
+function sum_of_squares(x, y) {
+    return square(x) + square(y);
+}
+function f(a) {
+    return sum_of_squares(a + 1, a * 2);
+}
+f(5);
+```
+
+위의 함수들은 어떻게 평가될까?
+
+![https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-5.svg](https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-5.svg)
+
+우선 각 함수 이름에 대한 환경이 조성된다! 그리고 각 이름(함수의)은 각각의 매개변수와 본문의 환경과 바인딩 된다.
+
+그럼 `f(5)` 를 호출했을 때 어떤 일들이 일어날까?
+
+![https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-6.svg](https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-6.svg)
+
+1. 우선 함수 `f` 의 매개변수인 `a` 와 인수 5의 바인딩을 담은 하나의 프레임으로 시작한다.
+2. 이후 `f` 의 반환문에 있는 `sum_of_squares(a+1, a*2)` 이 평가된다.
+ 1. 우선 `a+1` 와 `a*2` 조합 표현식들이 6과 10으로 평가된다.
+ 2. 이후 `sum_of_squares(6, 10)` 이 평가된다.
+3. 다시 반환문에 있는 `square(x) + square(y)` 가 평가된다
+
+…
+
+쭉쭉 표현식이 평가되고 → 해당 인수가 매개변수에 바인딩된 프레임을 구성하고 → 반환문의 함수에 평가되고 를 반복한다.
+
+여기서 중요한 점은, 매번 새롭게 매개변수와 바인딩된 프레임이 생성된다는 것이다. 그리고 각 프레임에 속한 `x` 는 이름은 같지만 서로 다른 지역변수이며 각각 다른 프레임에 속해있다.
+
+어라? 그러면 앞서 배정 연산 도입의 한 예시로 은행 출금 예시를 떠올려보자… 은행에 100만큼의 돈이 있고, 여기서 돈을 꺼내는 함수 `make_withdraw` 함수는 다음과 같이 구현되었다.
+
+```jsx
+function make_withdraw(balance) {
+    return amount => {
+               if (balance >= amount) {
+                   balance = balance - amount;
+                   return balance;
+               } else {
+                   return "insufficient funds";
+               }
+           };
+}
+```
+
+그럼 다음 표현식은 어떻게 평가될까?
+
+```jsx
+const W1 = make_withdraw(100);
+W1(50); // 50이다.
+```
+
+아래 그림을 보자.
+
+![https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-7.svg](https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-7.svg)
+
+1. `make_withdraw` 함수가 평가된 것
+
+![https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-8.svg](https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-8.svg)
+
+2. 인수로 넣은 100과 `balance` 매개변수가 묶인 프레임이 생성된다. **그리고 함수 `W1` 객체는 `E1` 을 가리킨다.(요기에 집중하자)**
+
+![https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-9.svg](https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-9.svg)
+
+3. 배정에 의해서 `amount` 의 값이 변하고
+
+![https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-10.svg](https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-10.svg)
+
+4. `balance` 에 값이 저장된다
+
+즉, 이전처럼 새롭게 프레임이 생성되면서 다른 지역변수의 값이 이용되는 것이 아니라  `balance` 라는 프레임이 값 저장소 역할을 하면서 함수의 값이 기억된다는 것이다.
+
+이러한 멘탈모델을 가져가면 좋을 것 같다! 앞으로 나오는 예시들도 결국 함수, 프레임의 생성 및 바인딩으로 해석하기에 이를 제대로 짚고 넘어가야겠다! 쨋든 오늘도 알찬 내용~
