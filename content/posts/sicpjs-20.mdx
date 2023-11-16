@@ -1,0 +1,116 @@
+---
+title: 자바스크립트로 배우는 SICP - 20. 쌍 객체와 변경자, 그리고 큐
+description: 생성자, 선택자 그리고... 변경자? 변경자의 도입과 이를 이용한 대기열을 구현해보자!
+createdAt: "2023-11-14"
+category: 독서
+timesToRead: 10
+---
+### 변경자와 사용 시 주의점
+
+오늘의 주 내용은 바로 `변경자` 이다.
+
+이전에 데이터의 정의에 대해서 다룰 때, 데이터는 `생성자` 와 `선택자` 로 이루어진다는 이야기를 했을 것이다. 하지만, 배정 연산이 도입된 이후라면 생성자와 선택자로는 수정을 할 수가 없어진다. 이를 가능케 하는 것이 바로 `변경자` 이다.
+
+그런데, 변경자를 사용할 때는 주의를 해야 한다. 다음 예시를 보자.
+
+```jsx
+const x = list("a", "b")
+const z1 = pair(x, x)
+const z2 = pair(list("a", "b"), list("a", "b"))
+```
+
+위 코드에서 `z1` 과 `z2` 의 `head` 를 바꾼다고 가정해보자. (이는 `list` 또는 `pair` 이라는 자료구조의 변경자인 `set_head` 라는 함수에 의해서 적용된다고 본다.)
+
+이때, 어떤 결과를 보일까? 아래 그림을 보자.
+
+![https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-17.svg](https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-17.svg)
+
+만약 `set_head` 를 `z1` 에 적용했을 때, 위 그림처럼, `z1` 의 헤드는 모두 `x` 의 헤드를 가리키기에 pair의 두 인수의 헤드를 모두 바꾸게 된다.
+
+![https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-18.svg](https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-18.svg)
+
+반면, `set_head` 를 `z2` 에 적용했을 때는 헤드는 pair에 들어간 리스트 인수들 중 첫 번째 리스트의 헤드만 변경되게 된다.
+
+여기서 포인트는 `z1` 에서는 `x` 라는 객체가 공유되고 있다는 사실이다. 즉, 변경자를 적용했을 때 공유된 객체일 경우 공유된 다른 모든 곳에 영향을 끼치게 되어 의도치 않은 에러를 발생시킬 수 있다는 사실이다.
+
+### 대기열과 변경자
+
+한편, 이러한 변경자를 이용하면 큐(대기열)를 정의할 수 있다. 추상화의 관점(데이터의 생성자, 선택자, 변경자 등등을 정의한다는 말이다.)에서 대기열의 추상 데이터를 구축하면 다음과 같다. (참고로  대기열이 FIFO 즉, 선입선출 방식임을 알아두자!)
+
+- 생성자 : `make_queue` - 빈 대기열을 돌려준다
+- 술어 : `is_empty_queue` - 주어진 대기열이 비어있는지 확인한다
+- 선택자 : `front_queue` - 대기열 앞단에 있는 항목을 돌려준다
+- 변경자
+  - `insert_queue` : 대기열 앞단에 항목을 삽입하고 수정된 대기열을 반환한다
+  - `delete_queue` : 대기열 앞단의 항목을 제거하고 수정된 대기열을 반환한다.
+
+이를 이용하여 각각을 구현하면 다음과 같을 것이다. (당근 `pair` 자료구조를 이용한다!)
+
+우선 쌍 자료구조에서 head와 tail을 선택하는 것을 대기열에서도 작성하면 다음과 같다.
+
+```jsx
+function front_ptr(queue) { return head(queue); } // 대기열 앞단을 가리킨다
+function rear_ptr(queue) { return tail(queue); } // 대기열 뒷단을 가리킨다
+```
+
+그리고 아래처럼 술어 및 선택자를 구현할 수 있다.
+
+- `is_empty_queue`
+
+  ```jsx
+  function is_empty_queue(queue) { return is_null(front_ptr(queue)); }
+    ```
+
+- `front_queue`
+
+  ```jsx
+  function front_queue(queue) {
+  	return is_empty_queue(queue)
+           ? error(queue, "front_queue called with an empty queue")
+           : head(front_ptr(queue));
+  }
+    ```
+
+
+변경자도 구현할 수 있다! 우선 쌍 자료구조의 변경자를 이용하여 대기열을 변경하는 함수들을 작성하면 다음과 같을 것이다. (단순히 이름을 바꾼 것이다!)
+
+```jsx
+function set_front_ptr(queue, item) { set_head(queue, item); }
+function set_rear_ptr(queue, item) { set_tail(queue, item); }
+```
+
+이제 이를 이용해 대기열의 변경자 구현하면 다음과 같다.(아래 그림을 참고하면서 생각해보자…)
+
+![https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-20.svg](https://sicp.sourceacademy.org/img_javascript/ch3-Z-G-20.svg)
+
+- `insert_queue`
+
+  ```jsx
+  function insert_queue(queue, item) {
+      const new_pair = pair(item, null);
+      if (is_empty_queue(queue)) { // 빈 대기열이라면
+          set_front_ptr(queue, new_pair); // 새로운 쌍을 대기열에 추가한다
+          set_rear_ptr(queue, new_pair);
+      } else {
+          set_tail(rear_ptr(queue), new_pair); // 기존 대기열의 끝단에 쌍을 추가하고
+          set_rear_ptr(queue, new_pair); // 끝단의 포인터를 추가된 쌍으로 옮긴다
+      }
+      return queue;
+  }
+    ```
+
+- `delete_queue`
+
+  ```jsx
+  function delete_queue(queue) {
+      if (is_empty_queue(queue)) { // 빈 대기열이면 제거할 것이 없다!
+          error(queue, "delete_queue called with an empty queue");
+      } else {
+          set_front_ptr(queue, tail(front_ptr(queue))); //
+          return queue;
+      }
+  }
+    ```
+
+
+이렇게 구현된 대기을을 이용하면 다양한 데이터를 다루는 것이 가능해진다! 오늘은 여기까지!
