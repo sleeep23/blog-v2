@@ -53,6 +53,9 @@ dependencies:
   eslint-config-next:
     specifier: 13.3.1
     version: 13.3.1(eslint@8.39.0)(typescript@5.2.2)
+  github-slugger:
+    specifier: ^2.0.0
+    version: 2.0.0
   next:
     specifier: 13.4.1
     version: 13.4.1(@opentelemetry/api@1.4.1)(react-dom@18.2.0)(react@18.2.0)

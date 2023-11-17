@@ -6,6 +6,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import remarkGfm from "remark-gfm";
+import GithubSlugger from "github-slugger";
 
 /** @type {import('contentlayer/source-files').ComputedFields} */
 const computedFields = {
@@ -16,6 +17,25 @@ const computedFields = {
   slugAsParams: {
     type: "string",
     resolve: (doc) => doc._raw.flattenedPath.split("/").slice(1).join("/"),
+  },
+  headings: {
+    type: "json",
+    resolve: async (doc) => {
+      const headingsRegex = /\n(?<flag>#{1,6})\s+(?<content>.+)/g;
+      const slugger = new GithubSlugger();
+      return Array.from(doc.body.raw.matchAll(headingsRegex)).map(
+        ({ groups }) => {
+          const flag = groups?.flag;
+          const content = groups?.content;
+          return {
+            level:
+              flag?.length === 1 ? "one" : flag?.length === 2 ? "two" : "three",
+            text: content,
+            slug: content ? slugger.slug(content) : undefined,
+          };
+        },
+      );
+    },
   },
 };
 
@@ -62,6 +82,11 @@ export const Post = defineDocumentType(() => ({
     timesToRead: {
       type: "number",
       required: false,
+    },
+    toc: {
+      type: "boolean",
+      required: false,
+      default: true,
     },
   },
   computedFields,
