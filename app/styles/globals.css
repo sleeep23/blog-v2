@@ -82,6 +82,9 @@
   img {
     @apply bg-white rounded-lg;
   }
+  details {
+    @apply mb-6;
+  }
 }
 
 @layer katex {
