@@ -14,7 +14,7 @@ export interface PostProps {
   };
 }
 
-export async function getPostFromParams(params: PostProps["params"]) {
+async function getPostFromParams(params: PostProps["params"]) {
   const slug = params?.slug?.join("/");
   const post = allPosts.find((post) => post.slugAsParams === slug);
 
@@ -52,14 +52,13 @@ export default async function PostPage({ params }: PostProps) {
   if (!post) {
     notFound();
   }
-
   return (
-    <article className="flex relative">
+    <article className="relative ">
       <div
         className="py-6 prose dark:prose-invert leading-relaxed prose-h1:text-2xl prose-a:break-all prose-code:text-cyan-600 dark:prose-code:text-cyan-500 break-keep prose-img:mx-auto
-    prose-code:overflow-auto katex-display:katex prose-a:prose-cyan flex-1"
+    prose-code:overflow-auto katex-display:katex prose-a:prose-cyan"
       >
-        <h2 className="">{post.title}</h2>
+        <h2>{post.title}</h2>
         {post.description && (
           <p className="text-sm text-slate-700 dark:text-slate-200">
             {post.description}
@@ -77,7 +76,11 @@ export default async function PostPage({ params }: PostProps) {
         <Mdx code={post.body.code} />
         <Comment />
       </div>
-      {post.headings.length !== 0 ? <TableOfContents post={post} /> : <></>}
+      {post.headings.length !== 0 ? (
+        <TableOfContents headings={post.headings} />
+      ) : (
+        <></>
+      )}
     </article>
   );
 }
