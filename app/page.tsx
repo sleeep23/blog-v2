@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PostListItem, SeriesListItem } from "@/components/post-list-item";
-import { archivedPosts, getHomeEntries } from "@/lib/posts";
+import { EntryList } from "@/components/entry-list";
+import { getEntries } from "@/lib/posts";
+
+// How many recent logs the home shows before "전체 기록 보기"
+const RECENT_LOGS = 3;
 
 export default function Home() {
+  const logs = getEntries("log");
   return (
     <div className="prose dark:prose-invert prose-h2:mt-2">
       <section
@@ -30,32 +34,31 @@ export default function Home() {
           </p>
         </div>
       </section>
-      <section id="posts">
-        <h3 className="text-2xl font-bold font-mono">Posts</h3>
+      <section id="writing">
+        <h3 className="text-2xl font-bold font-mono">Writing</h3>
         <p className="text-sm text-gray-500 mt-0">
-          만들면서 고민하고 공부한 것들을 기록합니다. 연구 이야기는{" "}
+          만들면서 고민한 것들을 공들여 정리한 글입니다. 연구 이야기는{" "}
           <a href="https://dongho-seo.me" target="_blank">
             dongho-seo.me
           </a>
           에 있어요.
         </p>
-        {getHomeEntries().map((entry) =>
-          entry.type === "series" ? (
-            <SeriesListItem key={entry.series.slug} series={entry.series} />
-          ) : (
-            <PostListItem key={entry.post.slug} post={entry.post} />
-          ),
-        )}
-        {archivedPosts.length > 0 && (
-          <p className="text-sm mt-8">
-            <Link
-              href="/archive"
-              className="text-gray-500 no-underline hover:underline"
-            >
-              예전 글 보기 ({archivedPosts.length}) →
-            </Link>
-          </p>
-        )}
+        <EntryList entries={getEntries("writing")} />
+      </section>
+      <section id="logs" className="mt-12">
+        <h3 className="text-2xl font-bold font-mono">Logs</h3>
+        <p className="text-sm text-gray-500 mt-0">
+          공부하고 만들면서 남긴 가벼운 기록입니다.
+        </p>
+        <EntryList entries={logs.slice(0, RECENT_LOGS)} />
+        <p className="text-sm mt-6">
+          <Link
+            href="/logs"
+            className="text-gray-500 no-underline hover:underline"
+          >
+            전체 기록 보기 →
+          </Link>
+        </p>
       </section>
     </div>
   );

@@ -21,8 +21,10 @@ export const oldestFirst = (posts: Post[]) =>
 // the English posts
 const originals = allPosts.filter((post) => post.lang === "ko");
 
-export const englishPosts = newestFirst(
-  allPosts.filter((post) => post.lang === "en" && !post.archived),
+export const englishWriting = newestFirst(
+  allPosts.filter(
+    (post) => post.lang === "en" && post.kind === "writing" && !post.archived,
+  ),
 );
 
 export function getTranslations(post: Post) {
@@ -58,15 +60,16 @@ export function getSeries(slug: string) {
 
 export type Series = NonNullable<ReturnType<typeof getSeries>>;
 
-export type HomeEntry =
+export type ListEntry =
   { type: "post"; post: Post } | { type: "series"; series: Series };
 
-// Home list: active posts, with each series collapsed into a single entry
+// Active posts of one kind, with each series collapsed into a single entry
 // placed at the date of its latest post
-export function getHomeEntries(): HomeEntry[] {
-  const entries: HomeEntry[] = [];
+export function getEntries(kind: Post["kind"]): ListEntry[] {
+  const entries: ListEntry[] = [];
   const seen = new Set<string>();
-  for (const post of newestFirst(originals.filter((p) => !p.archived))) {
+  const posts = originals.filter((p) => p.kind === kind && !p.archived);
+  for (const post of newestFirst(posts)) {
     const series = post.series ? getSeries(post.series) : undefined;
     if (!series) {
       entries.push({ type: "post", post });

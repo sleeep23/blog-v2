@@ -62,6 +62,9 @@ const posts = defineCollection({
     archived: z.boolean().default(false),
     // Posts in a series are grouped into one entry on the home list
     series: z.string().optional(),
+    // "writing" is a polished piece shown first on the home; everything else
+    // is a log (study notes, dev logs) listed under /logs
+    kind: z.enum(["writing", "log"]).default("log"),
     content: z.string(),
   }),
   transform: async (document, context) => ({
