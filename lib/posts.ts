@@ -17,14 +17,30 @@ export const newestFirst = (posts: Post[]) =>
 export const oldestFirst = (posts: Post[]) =>
   [...posts].sort((a, b) => time(a) - time(b));
 
-// Lists are built from the Korean originals; translations are reached from
-// the language switch on each post
+// The Korean home, series and archive list the Korean originals; /en lists
+// the English posts
 const originals = allPosts.filter((post) => post.lang === "ko");
+
+export const englishPosts = newestFirst(
+  allPosts.filter((post) => post.lang === "en" && !post.archived),
+);
 
 export function getTranslations(post: Post) {
   return allPosts
     .filter((p) => p.translationKey === post.translationKey)
     .sort((a, b) => (a.lang === "ko" ? -1 : b.lang === "ko" ? 1 : 0));
+}
+
+// Post URL -> URL of its other-language version, for the header switch
+export function getCounterparts() {
+  const map: Record<string, string> = {};
+  for (const post of allPosts) {
+    const other = allPosts.find(
+      (p) => p.translationKey === post.translationKey && p.lang !== post.lang,
+    );
+    if (other) map[post.slug] = other.slug;
+  }
+  return map;
 }
 
 export const archivedPosts = newestFirst(
