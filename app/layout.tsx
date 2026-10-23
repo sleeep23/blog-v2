@@ -8,7 +8,8 @@ import { ModeToggle } from "@/components/mode-toggle";
 import Github from "@/components/icons/github";
 import Homepage from "@/components/icons/homepage";
 import Mail from "@/components/icons/mail";
-import Link from "next/link";
+import { LanguageNav, SiteTitle } from "@/components/language-nav";
+import { getCounterparts } from "@/lib/posts";
 
 const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -50,15 +51,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <div className="max-w-2xl mx-auto py-10 px-4">
             <header>
               <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
-                <Link href="/" className="font-medium">
-                  <div>Dongho Seo</div>
-                  <div className="text-sm font-light">Engineering notes</div>
-                </Link>
+                <SiteTitle />
                 <div className="flex items-center justify-between gap-4">
-                  <nav className="flex gap-4 text-sm">
-                    <Link href="/">Home</Link>
-                    <Link href="/about">About</Link>
-                  </nav>
+                  <LanguageNav counterparts={getCounterparts()} />
                   <nav className="flex">
                     <Homepage />
                     <Github />
