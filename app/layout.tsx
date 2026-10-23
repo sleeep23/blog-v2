@@ -8,12 +8,18 @@ import { ModeToggle } from "@/components/mode-toggle";
 import Github from "@/components/icons/github";
 import Homepage from "@/components/icons/homepage";
 import Mail from "@/components/icons/mail";
-import { LanguageNav, SiteTitle } from "@/components/language-nav";
+import {
+  LanguageNav,
+  LanguageToggle,
+  SiteTitle,
+} from "@/components/language-nav";
 import { getCounterparts } from "@/lib/posts";
 
 const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
+  // Resolves relative URLs in metadata (canonical, Open Graph) to the blog domain
+  metadataBase: new URL("https://blog.dongho-seo.me"),
   title: {
     default: "Dongho Seo · Engineering notes",
     template: "%s · Dongho Seo",
@@ -53,11 +59,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
               <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
                 <SiteTitle />
                 <div className="flex items-center justify-between gap-4">
-                  <LanguageNav counterparts={getCounterparts()} />
+                  <LanguageNav />
                   <nav className="flex">
                     <Homepage />
                     <Github />
                     <Mail />
+                    <LanguageToggle counterparts={getCounterparts()} />
                     <ModeToggle />
                   </nav>
                 </div>

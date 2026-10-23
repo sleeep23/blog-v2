@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 export default function ArchivePage() {
   return (
     <div className="prose dark:prose-invert py-6">
-      <Link href="/" className="text-sm no-underline text-gray-500">
-        ← Home
+      <Link href="/logs" className="text-sm no-underline text-gray-500">
+        ← Logs
       </Link>
       <h2 className="mt-4 mb-1">Archive</h2>
       <p className="text-sm text-gray-500 mt-0">

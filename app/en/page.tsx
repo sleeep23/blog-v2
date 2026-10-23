@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PostListItem } from "@/components/post-list-item";
-import { englishPosts } from "@/lib/posts";
+import { englishWriting } from "@/lib/posts";
 
 export const metadata: Metadata = {
   title: { absolute: "Dongho Seo · Engineering notes" },
@@ -36,17 +36,18 @@ export default function EnglishHome() {
           </p>
         </div>
       </section>
-      <section id="posts">
-        <h3 className="text-2xl font-bold font-mono">Posts</h3>
+      <section id="writing">
+        <h3 className="text-2xl font-bold font-mono">Writing</h3>
         <p className="text-sm text-gray-500 mt-0">
-          Notes on things I built, wrestled with, and studied. Most posts are in
-          Korean; these are the ones available in English. For research, see{" "}
+          Longer pieces on things I built and wrestled with. Most of my writing
+          is in Korean; these are the pieces available in English. For research,
+          see{" "}
           <a href="https://dongho-seo.me" target="_blank">
             dongho-seo.me
           </a>
           .
         </p>
-        {englishPosts.map((post) => (
+        {englishWriting.map((post) => (
           <PostListItem key={post.slug} post={post} />
         ))}
       </section>
