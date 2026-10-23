@@ -1,0 +1,220 @@
+---
+title: I Built the Same Service Four Times
+description: What I learned rebuilding Gijol, a graduation requirement checker, four times over four years.
+createdAt: "2026-04-01"
+category: Retrospective
+timesToRead: 18
+---
+
+In April 2022, I built Gijol so that GIST students could check their own graduation requirements. Over the next four years — with two years of military service in between — I rebuilt the same service four times.
+
+Building one project four times did not mean writing the same code four times. It meant looking at the same user problem four times. Each time I rebuilt it to make it “better,” but what “better” meant kept changing. This is a record of how that definition changed.
+
+- **v1** — Make it usable
+- **v1.1** — The version that never shipped
+- **v2** — Make it feel like a real service
+- **v2.1** — Subtract to sustain
+
+---
+
+## v1 — Make it usable
+
+### The problem
+
+In April 2022 I had just declared my major in Electrical Engineering and Computer Science. I had no clear idea which courses to take or how to plan the next few years, and during COVID there were few seniors to ask. The main sources of information were the student community and the *academic catalog* — the official document that lists curricula and graduation rules for each admission year. It is authoritative, but it does not answer the question a student actually has: “so which courses should *I* take?”
+
+Graduation requirements sat at the center of that question, yet the school had no tool for checking them. As far as I knew, students submitted their course list and staff checked it by hand. That made some sense — the rules depend on admission year, major, catalog revisions, and which courses count toward what — but for students it meant the information arrived too late. You need it while you are planning, not right before graduation.
+
+A project with the same idea was already underway, so I joined it, and that became Gijol.
+
+### Cutting the MVP small
+
+The team was three people: backend, frontend, and design. I had almost no development experience, so I started by working out the user flow and building prototypes in Framer rather than writing business logic.
+
+Checking graduation requirements is a tangle of admission year, major, course categories, and credit recognition rules. Trying to handle every case in the first version would have meant never shipping, so we cut the MVP down to three steps: upload your transcript, choose your major, see the result. Even so, I did not want the result screen to be a bare “met / not met.” What students need is to know what to do next, so results were broken down by requirement area, each with overall progress, completed courses, and recommendations.
+
+We worked in roughly weekly cycles: design and user flow in week one, frontend and backend in weeks two and three, final checks and launch in week four, then about a month of bug fixes and feedback collection.
+
+### What launch revealed
+
+We shared the service on Everytime (a Korean campus community app) and in class-year and department group chats. Usage was higher than expected from the first week and spiked during course registration. That was my first sign that Gijol is not something people open daily; it is something they need intensely at specific moments.
+
+The best moment was hearing friends and seniors say it looked genuinely well made. It meant the flow I had agonized over in the prototype had reached real users. Later, when people introduced me as “the Gijol developer,” strangers would say they had used it and liked it. That was when it stopped being code on my laptop and became a service the school actually used.
+
+There were plenty of problems too. Transcripts from overseas summer sessions listed course names in English, which our name-based matching could not recognize, so we had to map them to equivalent GIST courses. Spreadsheets in unexpected formats or languages could send the parser into an infinite loading state. I had only tested one well-formed transcript; real users brought far more varied input. That was the first time I really felt the cost of missing error handling and tests.
+
+### What v1 taught me
+
+v1's real achievement was not a perfect calculator. It was putting a working service in front of students and having them come back to it at registration time. Without users there are no bugs to find, no feedback, and no reason for a next version.
+
+## v1.1 — The version that never shipped
+
+### Why I rebuilt it
+
+After launch, the first thing I wanted to fix was the codebase. v1 was built with Create React App, and I kept hearing that Vite was faster and produced smaller bundles. With few features yet, there was little to lose, so I rewrote the app on Vite, moved shared state into the Context API instead of passing it down through the screen flow, and planned to add search. Honestly, it was half technical curiosity and half wanting to redo something I had already shipped, properly.
+
+### The Vite experiment
+
+To compare the two, I built both in identical Node 16 Docker environments. The CRA build output was about 5.4 MB; the Vite output was about 1.1 MB, with a build time of around 2.1 seconds. At first that looked like a clear win. But the main JS chunk was still about 309 KB gzipped and triggered a single-chunk warning. That taught me that a smaller total output is not the same as a small initial load for the user. Changing the bundler is not the same as optimizing the app; code splitting, chunk management, and a loading strategy based on the real user flow are separate work.
+
+For Gijol's usage pattern — upload a file, read a result — a lighter initial load and simpler deployment still mattered more than runtime interaction performance, so the switch was worthwhile. It just was not enough on its own.
+
+### Why it stalled
+
+v1.1 never launched. It did not give users anything clearly new; it was mostly me reorganizing my own code, and there was no product reason that said “this has to ship.” I was effectively working alone by then, and curiosity about Vite and refactoring could not carry it to the finish. Coursework took over.
+
+At the same time, a collaboration on a different project fell apart badly. It shook how I felt about development itself. I started doubting whether I really liked it or was learning anything, and for a while I avoided even opening my laptop. v1.1 stopped without anyone declaring it over.
+
+Only after that faded did I want to build again — and the first thing I wanted to do was finish what I had left undone. The structural work from v1.1 became the starting point for v2.
+
+### What v1.1 taught me
+
+Two things. A technically better choice still has to be shown to improve what users experience. And internal improvements alone rarely create enough momentum to ship: if you cannot explain why users should use the new version, it is hard to push it through yourself. v1.1 was where I started to separate changes to the product from changes to the code.
+
+## v2 — Make it feel like a real service
+
+### Why I came back
+
+Mostly regret — about v1.1, and about v1, which looked unfinished when I revisited it. The minimal upload-and-result flow had been right for an MVP, but it was too narrow to grow into course planning and minor or double-major management. That called for a dashboard that keeps showing a student's academic status.
+
+The underlying problem had not gone anywhere, either. Questions about minors, double majors, exchange credits, retakes, and withdrawals kept coming in, and as far as I could tell nothing else addressed the problem as a service. I felt responsible for taking Gijol from a calculator to a more personal academic planning tool. I even wondered, somewhat grandly, whether it could generalize to other universities and make money. In hindsight that was a big leap, but it got me building again.
+
+### From interactions to information
+
+Looking back, v1's result screen was closer to a set of pretty interactions than an information service: you had to click into each area to see anything. But the point of a graduation checker is to convey information quickly — what you have met, what you are missing, and what to take next. v2 moved to a dashboard where that is visible from the start: a sidebar for my courses, requirements, and course information; a bar chart of credits per semester; summary cards for total credits, the weakest area, and pending feedback; and per-area progress bars and tables, so users did not have to keep clicking.
+
+Login came from the same idea. I wanted users who opted in to share their course paths by class year, so others could see how students with a similar major and year had sequenced their courses.
+
+### Stack choices
+
+v2 was rebuilt with Next.js, Mantine, Recoil, and NextAuth. Honestly, I picked Next.js less because I needed SSR than out of interest, routing convenience, and a vague hope for SEO — it felt like what a “proper” web service would use. Mantine had a clearer reason: as the only frontend developer, I needed consistent design fast, and its defaults were closest to what I had in mind. It turned out to be one of the best decisions in v2.
+
+### What the data showed
+
+With Vercel Analytics I could see the pattern clearly. Peak concurrent users rose from the 50s in v1 to the 280s in v2, which suggested the redesign was paying off. But outside registration season, daily users dropped to four or five. Gijol solved a strong need at a very narrow moment; people checked their status and left. Retention would require reasons to come back.
+
+### Trouble with SSR and auth
+
+Next.js brought problems I had not anticipated. I restored Recoil state from `sessionStorage`, which does not exist during server rendering, so the server rendered the default state and the client then rendered something else — a hydration mismatch. I worked around it with a hook that only showed `sessionStorage`-dependent values after the client mounted. It worked, but it was a workaround at the level I understood then, not a real design for state restoration. The lasting lesson was that Next.js is not just React with nicer routing; it is a framework where you constantly have to be aware of the server/client boundary.
+
+Auth went similarly. My NextAuth refresh-token rotation put `update` in a `useEffect` dependency array and called `update` inside that effect, so every session update re-rendered, re-ran the effect, and refreshed again — an infinite loop. Moving the refresh into NextAuth's API-route callbacks raised harder questions about how to split authentication and authorization between frontend and backend, and core feature work slowed down.
+
+I eventually switched to Clerk, which was free up to 5,000 monthly active users and came with SDKs, an admin console, and webhooks. Given that shipping fast was the priority, it was the right call. But it left a sense of technical debt: a tool can make you much faster, and whatever it handles for you that you do not understand becomes something you will have to learn later.
+
+### Growing pains
+
+After v2 launched, many people on campus already knew Gijol, and the feedback was that it looked and worked much better. If v1 found real users, v2 was when they started treating it as a finished service.
+
+To improve retention I listed everything a student might come back for — timetables, course information and reviews, notices, building locations, dorm information, clubs. I could not build all of it, so the rule was to skip what the school's systems already did well and focus on what students struggled with: timetables, course information, graduation requirements, and course path recommendations. The real constraint was people. Most maintenance and improvement fell on me, and the more the service grew, the heavier it became. That was when I started thinking that making Gijol sustainable mattered as much as making it bigger.
+
+## The gap — two years of military service
+
+### Running a service you cannot touch
+
+During my military service (mandatory in Korea), students kept using Gijol at registration time. Keeping it running when I could not maintain it was harder than I expected.
+
+The most concrete cost was money: server costs and a Vercel Team plan added up to about ₩50,000 (roughly US$35) a month. Small for a company, but not for a soldier paying out of pocket — especially for a service whose traffic comes in short bursts. I started to doubt that it needed an always-on server at all.
+
+Maintenance was the other burden. When an error report came in, I could only describe the problem to a teammate. I remember checking DevTools and server logs and concluding it was a backend issue; the backend teammate fixed it, and I did not document it well enough to reconstruct the details now. I also remember rushing a Next.js upgrade after a security advisory. The service was running, but not in a state I could keep close watch over.
+
+### A different question
+
+So the question changed from “what should I add?” to “does this service need a server and login at all?” The core experience was still uploading a transcript and checking requirements, which gave users little reason to log in. Moving spreadsheet parsing and requirement checks into the browser would cost some client-side work, but Gijol is not a real-time, high-interaction service. Bringing operating costs close to zero and removing the login barrier was worth more.
+
+### Rebuilding fast
+
+After my discharge, registration was less than two months away. Before writing code, I posted on Everytime to ask whether students still wanted the service, and many did. I worked intensively for two to three weeks starting mid-January. I needed to ship fast, but I did not want another bare-bones v1, so v2.1 launched with a timetable, course search, and a roadmap alongside the requirement checker. It was not a version that piled more on; it removed the server and login while broadening what students could do right away.
+
+## v2.1 — Subtract to sustain
+
+### No server, no login
+
+The first change was operational: no login, no backend server, and a near-serverless deployment on Vercel. With the core logic in the frontend, operating cost dropped to almost nothing, and anyone could use the service immediately.
+
+I also moved from Mantine to shadcn/ui and Tailwind. Mantine had been great for building a polished UI quickly in v2, but in v2.1 I wanted to own the component code inside the project. That mattered especially when reading and changing code with AI, which works better on components that live in the repository than on a library's abstractions.
+
+### Features that follow the result
+
+The timetable, course search, and roadmap were not separate features. They extend what happens after the requirement check: v2 told students how much of their requirements they had met; v2.1 aimed to carry that into which courses to take next.
+
+- **Timetable.** Once a student sees a gap, the next question is what to take next semester. For now students arrange courses themselves, but the long-term goal is to recommend courses from their completed credits, remaining requirements, and the course offerings, and let them adjust the plan directly on the timetable.
+- **Course search.** Knowing an area is incomplete is not enough. Students immediately want to know which courses fill it, when they are offered, and whether they fit their schedule — information that used to be scattered across separate systems and documents.
+- **Roadmap.** For first- and second-year students choosing a major, the question comes earlier: in what order do people in this major usually take courses, and which foundations come first? Departmental roadmaps used to answer this, but the current catalog no longer makes it clear.
+
+### Rebuilding the requirement checker
+
+The requirement logic that used to run on the backend was rebuilt from scratch in the frontend, checking each requirement area in order, from general education through the major.
+
+There is still unfinished UX here. Checking requirements is not just summing courses per area: the same course can count toward different areas depending on how the student wants it recognized, and with minors and double majors, where each course is placed matters. Today, students edit the uploaded data and press a button to recompute. It works, but it does not reflect their intent naturally. The next step is letting students assign each course's category directly and see the result update immediately.
+
+I also paid more attention to first impressions — small animations, typography, OG images, and metadata — because the preview people see when a link is shared, and how a page feels when it opens, affect how much they trust the service.
+
+## How I used AI
+
+### Guardrails, not a code generator
+
+v2.1 was essentially a solo project on a tight deadline, so I leaned on AI agents heavily — but as a tool for breaking large changes into small steps and iterating within tests and review, not as something that writes the code for me.
+
+The requirement checker mattered most, because a wrong answer can change someone's course plan. So I first built dummy transcripts and defined exactly what the result should be for each, then had the AI write tests against those expected results, and accepted implementations only when they passed. I started with the basic flow — checking areas in order from general education to the major — and then added exceptions one at a time, such as course classifications and area-specific recognition rules.
+
+Asking an AI to “build the graduation requirement checker” produces plausible code that is hard to verify. With dummy data, expected results, and tests in place first, I could at least tell whether the code was right under the conditions I cared about. I was not handing the implementation to the AI; I was building the fence it had to stay inside.
+
+### Migrating the UI
+
+The Mantine-to-shadcn migration followed the same approach. I sorted components by how tightly they were coupled to business logic. Pure styling, layout, and display components went first. Components that used Mantine hooks or sat directly on the user flow came last, replaced with separate libraries or my own code, checking after each step that the flow still worked.
+
+### What I took away
+
+Using AI well depends less on writing code than on knowing what is safe to change and what is dangerous to touch. In a domain with complex rules like Gijol's, the tests, data, and human review that verify the output matter more than the output itself.
+
+## What launch taught me about users
+
+Students used v2.1 for different reasons depending on their year. First- and second-year students had taken few courses, so detailed requirement checks mattered less; the roadmap was more valuable, and several said it helped them plan. Upper-year students already had their own plans. For them, the point was verifying that what they had taken and planned to take would actually satisfy the requirements, and they came back periodically to check.
+
+So Gijol is really two services: a planning tool for younger students and a verification tool for older ones. Rather than forcing both into the same screen, the next version should give each group an entry point built around their own question.
+
+## What surfaced after v2.1
+
+### Demand was still there
+
+Considering how quickly it was built, traffic exceeded expectations: 661 visitors, 5,736 page views, a 26% bounce rate, and many pages per visit — people were exploring, not just clicking a link and leaving. The timetable, roadmap, and requirement checker were all used. The question “does anyone still need this?” had a clear answer.
+
+### The school started offering its own tool
+
+Around the same time, I heard the school had started offering its own graduation simulation. If an official system covers the basic check, Gijol cannot survive as just a pass/fail checker. It has to offer something more personal: judgments and recommendations based on each student's year, major, actual course history, and plans.
+
+### One catalog is not enough
+
+My biggest mistake in v2.1 showed up here. I assumed that building course data and rules from the 2025 academic catalog would cover most students. Questions in the support chat after launch proved that wrong. Course codes changed from year to year; courses were added and removed; general education was restructured; credit rules and prerequisites varied by department; and courses with the same name had to be treated differently depending on the year.
+
+Students take courses across several years, and each course belongs to the rules of the year it was taken. Correct checking requires snapshots of each year's catalog and course data, evaluating each course under the rules that applied to it, and merging the results. The next Gijol needs versioned academic rules and an interface that lets students correct how their courses are counted. The hard part of graduation checking turned out not to be the calculation, but managing changing rules and exceptions safely — and explaining them to users.
+
+## Me in v1, me in v2.1
+
+The v1 me was good at getting things out. Without the experience to weigh technical trade-offs, I still found a real problem and pushed a working service into students' hands.
+
+The v2.1 me thinks much more about trade-offs. Next.js brings routing and SSR, along with hydration and state-restoration problems. Login enables personalization, along with responsibility for authentication and user data. A server allows more flexible processing, along with operating cost and maintenance. Now I first ask whether a technology fits this service's usage pattern and the conditions I can operate it under.
+
+AI has made implementation much cheaper, which makes design matter more, not less. Writing code quickly is easy now; deciding on a structure that survives new exceptions, that someone else can understand and fix, and that tells you where to change things when the rules change, is still a human judgment.
+
+That does not make v1's approach wrong. Users do not see the internals. Whether it is built with CRA or Vite, or computes on the server or in the browser, rarely matters to them. If the core value holds, people will use something even if it is a little slow or rough; a beautiful internal structure means nothing if it does not solve their problem. Without v1's drive, Gijol would never have met real users; without v2.1's sense of trade-offs, it could not have kept running.
+
+## On collaboration
+
+I was lucky with the Gijol team. Roles were clearly divided between backend, frontend, and design, and we each focused on our own area and provided what others needed. On top of that division there was trust: we did not second-guess each other's work, and being trusted made each of us more responsible for our part. New features came with an explanation of why they were needed, and meetings were short — we shared the agenda, came back with proposals, and made decisions.
+
+Being new, I shared my work often and asked for feedback, and the team's encouragement made me want to prepare better each time. The weak spot was that clear ownership left little code review or knowledge sharing within an area. That was a reasonable trade-off when shipping fast was the priority, but more of it would have helped the whole team learn faster. Next time I want to keep the clear roles and speed while writing lightweight code review and sharing into the team's working agreement. Good collaboration does not run on goodwill alone; trust and delegation work only when we have agreed on what we are building, who owns what, and how we review each other's work.
+
+## What I am taking with me
+
+Building the same service four times over four years, what changed most was not the code or the UI library. It was my definition of a good service.
+
+In v1, a good service worked and people used it. In v2, it felt like a real service. In v2.1, it could keep running without exhausting the person running it. Now I would add one more: a good service has a structure that can absorb changing domain rules and user exceptions.
+
+If there is a next version, it needs fuller support for minors and double majors, per-year catalog snapshots, an admin for managing rule sets, and a way for students to correct how their courses are counted. Beyond that, I would like to connect it with the school's authentication and grow it into a tool that supports students' decisions from course planning to finding a lab and preparing for a career.
+
+A good service did not come together in one attempt. Each time I looked at the same problem, it looked a little different, and that difference became the reason for the next version. Before it was a graduation checker, Gijol was the project that taught me how to hold onto a user's problem for a long time and keep redefining it.
+
+---
+
+*This is an English adaptation of the [original Korean post](/posts/gijol-1), condensed for readers outside GIST.*

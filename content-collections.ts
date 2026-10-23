@@ -57,12 +57,21 @@ const posts = defineCollection({
     thumbnailURL: z.string().optional(),
     timesToRead: z.number().optional(),
     toc: z.boolean().default(true),
+    // Archived posts are hidden from the home list and search engines but
+    // keep their URLs
+    archived: z.boolean().default(false),
+    // Posts in a series are grouped into one entry on the home list
+    series: z.string().optional(),
     content: z.string(),
   }),
   transform: async (document, context) => ({
     ...document,
     slug: `/posts/${document._meta.path}`,
     slugAsParams: document._meta.path,
+    // Translations live under content/posts/<lang>/ with the same file name
+    // as the Korean original, e.g. posts/en/gijol-1.mdx for posts/gijol-1.mdx
+    lang: document._meta.path.startsWith("en/") ? "en" : "ko",
+    translationKey: document._meta.path.replace(/^en\//, ""),
     headings: extractHeadings(document.content),
     body: await compileMDX(context, document, mdxOptions),
   }),
