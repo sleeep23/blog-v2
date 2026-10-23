@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { allPosts, Post } from "@/.contentlayer/generated";
+import { allPosts, type Post } from "content-collections";
 import { format, getTime, parseISO } from "date-fns";
 import { ClockIcon } from "@radix-ui/react-icons";
 
@@ -39,7 +39,7 @@ export default function Home() {
       <section id="posts">
         <h3 className="text-2xl font-bold font-mono">Posts</h3>
         {alignedByIsoString(allPosts).map((post) => (
-          <article key={post._id} className="mt-4">
+          <article key={post.slug} className="mt-4">
             <Link
               href={post.slug}
               className="text-sm no-underline hover:underline underline-offset-2 decoration-cyan-500 decoration-2"
