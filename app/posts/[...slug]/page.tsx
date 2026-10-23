@@ -66,11 +66,16 @@ export default async function PostPage({ params }: PostProps) {
         )}
         <p className="text-sm flex align-middle gap-2">
           <span>{format(parseISO(post.createdAt), "yyyy-MM-dd")}</span> |{" "}
-          <span>{post.category}</span> |{" "}
-          <span className="flex flex-col justify-center">
-            <ClockIcon />
-          </span>
-          <span>{post.timesToRead}min</span>
+          <span>{post.category}</span>
+          {post.timesToRead && (
+            <>
+              |{" "}
+              <span className="flex flex-col justify-center">
+                <ClockIcon />
+              </span>
+              <span>{post.timesToRead}min</span>
+            </>
+          )}
         </p>
         <hr className="my-4" />
         <Mdx code={post.body.code} />

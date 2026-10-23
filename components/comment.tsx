@@ -4,7 +4,8 @@ import Giscus from "@giscus/react";
 import { useTheme } from "next-themes";
 
 export default function Comment() {
-  const { theme } = useTheme();
+  // "system" is not a valid giscus theme, so pass the resolved one
+  const { resolvedTheme } = useTheme();
   return (
     <div className="pt-5">
       <Giscus
@@ -14,11 +15,10 @@ export default function Comment() {
         category="General"
         categoryId="DIC_kwDOKYhYxc4CbCAi"
         mapping="title"
-        term="Welcome to @giscus/react component!"
         reactionsEnabled="1"
         emitMetadata="0"
         inputPosition="bottom"
-        theme={theme}
+        theme={resolvedTheme === "dark" ? "dark" : "light"}
         lang="ko"
         loading="lazy"
       />

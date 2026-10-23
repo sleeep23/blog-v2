@@ -17,23 +17,22 @@ export default function TableOfContents({
   const [activeHeading, setActiveHeading] = useState<string | null>(null);
 
   useEffect(() => {
+    // The active heading is the last one scrolled past the 100px line, so a
+    // section stays highlighted while its body is being read.
     const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      let currentHeading = null;
+      let currentHeading: string | null = null;
 
       headings.forEach((heading) => {
         const element = document.getElementById(heading.slug);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= 100 && rect.bottom >= 100) {
-            currentHeading = heading.slug;
-          }
+        if (element && element.getBoundingClientRect().top <= 100) {
+          currentHeading = heading.slug;
         }
       });
       setActiveHeading(currentHeading);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -57,7 +56,9 @@ export default function TableOfContents({
                 <li key={`#${heading.slug}`} className="relative mb-2">
                   <a
                     className={`block ${barHeight} ${barWidth} rounded transition-all duration-200 ${
-                      isActive ? "bg-white shadow-lg" : "bg-gray-300"
+                      isActive
+                        ? "bg-slate-900 dark:bg-white shadow-lg"
+                        : "bg-gray-300 dark:bg-gray-600"
                     } hover:bg-gray-400`}
                     data-level={heading.level}
                     href={`#${heading.slug}`}

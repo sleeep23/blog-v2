@@ -53,13 +53,18 @@ export default function Home() {
               {post.createdAt && (
                 <p className="text-xs mt-0 text-gray-500 flex align-middle gap-2">
                   <span>{format(parseISO(post.createdAt), "yyyy-MM-dd")}</span>|{" "}
-                  <span>{post.category}</span> |{" "}
-                  <span className="flex align-middle gap-1">
-                    <span className="flex flex-col justify-center">
-                      <ClockIcon />
-                    </span>
-                    <span>{post.timesToRead}min</span>
-                  </span>
+                  <span>{post.category}</span>
+                  {post.timesToRead && (
+                    <>
+                      |{" "}
+                      <span className="flex align-middle gap-1">
+                        <span className="flex flex-col justify-center">
+                          <ClockIcon />
+                        </span>
+                        <span>{post.timesToRead}min</span>
+                      </span>
+                    </>
+                  )}
                 </p>
               )}
             </Link>
