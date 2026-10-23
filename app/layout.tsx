@@ -18,6 +18,8 @@ import { getCounterparts } from "@/lib/posts";
 const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
+  // Resolves relative URLs in metadata (canonical, Open Graph) to the blog domain
+  metadataBase: new URL("https://blog.dongho-seo.me"),
   title: {
     default: "Dongho Seo · Engineering notes",
     template: "%s · Dongho Seo",
