@@ -1,24 +1,21 @@
 ---
-title: What I Learned Building the Same Service Four Times in Four Years
-description: How my definition of a “good service” changed while rebuilding the same product four times.
+title: I Built the Same Service Four Times
+description: What I learned rebuilding Gijol, a graduation requirement checker, four times over four years.
 createdAt: "2026-04-01"
 category: Retrospective
 timesToRead: 18
 ---
 
-Gijol is a service that helps GIST students check whether they meet their graduation requirements and plan their courses. Between its first launch in 2022 and early 2026, I rebuilt it four times — v1, v1.1, v2, and v2.1 — through real user feedback, technical detours, the cost of running it during my military service, and a rebuild with AI agents.
+In April 2022, I built Gijol so that GIST students could check their own graduation requirements. Over the next four years — with two years of military service in between — I rebuilt the same service four times.
 
-## The four versions at a glance
+Building one project four times did not mean writing the same code four times. It meant looking at the same user problem four times. Each time I rebuilt it to make it “better,” but what “better” meant kept changing. This is a record of how that definition changed.
 
-| Version | The question at the time | What it taught me |
-| ------- | ------------------------ | ----------------- |
-| v1 | Can I ship something students can actually use? | Problems and feedback only appear once real users show up. |
-| v1.1 | Will a technically better structure make a better service? | Improving the code and adding product value are different problems. |
-| v2 | Can it feel like a real service? | Information design, personalization, auth, and operating cost arrive together. |
-| v2.1 | Can I keep it running on my own? | Removing things can be an improvement too. |
-| Next | What should the next version solve? | It needs a structure that can absorb changing rules and user exceptions. |
+- **v1** — Make it usable
+- **v1.1** — The version that never shipped
+- **v2** — Make it feel like a real service
+- **v2.1** — Subtract to sustain
 
-Building one project four times did not mean writing the same code four times. It meant looking at the same user problem four times. Each time I rebuilt it to make it “better,” but what “better” meant kept changing: first, something that works and that students use; then, something that feels like a real service; then, something I can afford to keep running; and now, with AI making implementation fast, a design and a set of checks that can be trusted.
+---
 
 ## v1 — Make it usable
 
