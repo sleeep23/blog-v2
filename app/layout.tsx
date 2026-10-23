@@ -1,4 +1,6 @@
+import "katex/dist/katex.min.css";
 import "./styles/globals.css";
+import type { Metadata, Viewport } from "next";
 import { Inter as FontSans } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@/components/analytics";
@@ -9,7 +11,7 @@ import Link from "next/link";
 
 const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Sleeep23's space",
   description: "A passionate front-end engineer's blog",
   authors: [
@@ -19,6 +21,9 @@ export const metadata = {
     },
   ],
   creator: "sleeep23",
+};
+
+export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "white" },
     { media: "(prefers-color-scheme: dark)", color: "black" },
@@ -31,14 +36,8 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en">
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
-          crossOrigin="anonymous"
-        ></link>
-      </head>
+    // next-themes sets the theme class on <html> before hydration
+    <html lang="ko" suppressHydrationWarning>
       <body
         className={`antialiased min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 ${fontSans.className}`}
       >

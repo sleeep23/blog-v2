@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { allPosts } from "contentlayer/generated";
+import { allPosts } from "content-collections";
 
 import { Metadata } from "next";
 import { Mdx } from "@/components/mdx-components";
@@ -8,21 +8,15 @@ import { ClockIcon } from "@radix-ui/react-icons";
 import Comment from "@/components/comment";
 import TableOfContents from "@/components/table-of-contents";
 
+type Params = { slug: string[] };
+
 export interface PostProps {
-  params: {
-    slug: string[];
-  };
+  params: Promise<Params>;
 }
 
 async function getPostFromParams(params: PostProps["params"]) {
-  const slug = params?.slug?.join("/");
-  const post = allPosts.find((post) => post.slugAsParams === slug);
-
-  if (!post) {
-    null;
-  }
-
-  return post;
+  const { slug } = await params;
+  return allPosts.find((post) => post.slugAsParams === slug.join("/"));
 }
 
 export async function generateMetadata({
@@ -40,7 +34,7 @@ export async function generateMetadata({
   };
 }
 
-export async function generateStaticParams(): Promise<PostProps["params"][]> {
+export async function generateStaticParams(): Promise<Params[]> {
   return allPosts.map((post) => ({
     slug: post.slugAsParams.split("/"),
   }));
@@ -82,7 +76,7 @@ export default async function PostPage({ params }: PostProps) {
           )}
         </p>
         <hr className="my-4" />
-        <Mdx code={post.body.code} />
+        <Mdx code={post.body} />
         <Comment />
       </div>
     </article>
