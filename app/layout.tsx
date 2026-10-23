@@ -6,21 +6,26 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@/components/analytics";
 import { ModeToggle } from "@/components/mode-toggle";
 import Github from "@/components/icons/github";
-import Twitter from "@/components/icons/twitter";
+import Homepage from "@/components/icons/homepage";
+import Mail from "@/components/icons/mail";
 import Link from "next/link";
 
 const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Sleeep23's space",
-  description: "A passionate front-end engineer's blog",
+  title: {
+    default: "Dongho Seo · Engineering notes",
+    template: "%s · Dongho Seo",
+  },
+  description:
+    "Engineering notes by Dongho Seo — things I built, wrestled with, and studied.",
   authors: [
     {
-      name: "sleeep23",
-      url: "https://sleeep23.vercel.app",
+      name: "Dongho Seo",
+      url: "https://dongho-seo.me",
     },
   ],
-  creator: "sleeep23",
+  creator: "Dongho Seo",
 };
 
 export const viewport: Viewport = {
@@ -44,18 +49,20 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="max-w-2xl mx-auto py-10 px-4">
             <header>
-              <div className="flex items-center justify-between">
-                <div className="font-medium">
-                  <div>Sleeep23&apos; space</div>
-                  <div className="text-sm font-light">Front-end Engineer</div>
-                </div>
-                <div className="flex items-center justify-between gap-6">
-                  <nav>
+              <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+                <Link href="/" className="font-medium">
+                  <div>Dongho Seo</div>
+                  <div className="text-sm font-light">Engineering notes</div>
+                </Link>
+                <div className="flex items-center justify-between gap-4">
+                  <nav className="flex gap-4 text-sm">
                     <Link href="/">Home</Link>
+                    <Link href="/about">About</Link>
                   </nav>
-                  <nav>
+                  <nav className="flex">
+                    <Homepage />
                     <Github />
-                    <Twitter />
+                    <Mail />
                     <ModeToggle />
                   </nav>
                 </div>

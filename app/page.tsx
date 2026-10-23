@@ -1,16 +1,7 @@
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { allPosts, type Post } from "content-collections";
-import { format, getTime, parseISO } from "date-fns";
-import { ClockIcon } from "@radix-ui/react-icons";
-
-const alignedByIsoString = (posts: Post[]) => {
-  return [...posts].sort((a, b) => {
-    const timeA = getTime(parseISO(a.createdAt));
-    const timeB = getTime(parseISO(b.createdAt));
-    return timeB - timeA;
-  });
-};
+import { PostListItem, SeriesListItem } from "@/components/post-list-item";
+import { archivedPosts, getHomeEntries } from "@/lib/posts";
 
 export default function Home() {
   return (
@@ -26,50 +17,45 @@ export default function Home() {
             src="https://github.com/sleeep23.png"
           />
           <AvatarFallback>
-            <p>Dongho Seo</p>
+            <p>DS</p>
           </AvatarFallback>
         </Avatar>
         <div className="text-center max-w-md mx-auto flex flex-col">
-          <h3 className="text-2xl font-bold mt-0">Dongho Seo</h3>
-          <p className="text-gray-500 dark:text-gray-200">
-            A passionate front-end engineer who loves everything that changes
+          <h3 className="text-2xl font-bold mt-0 mb-1">Dongho Seo</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0 mb-3">
+            Researcher at SYMPLE Lab, GIST
+          </p>
+          <p className="text-gray-600 dark:text-gray-200 my-0">
+            Immerse, then simplify.
           </p>
         </div>
       </section>
       <section id="posts">
         <h3 className="text-2xl font-bold font-mono">Posts</h3>
-        {alignedByIsoString(allPosts).map((post) => (
-          <article key={post.slug} className="mt-4">
+        <p className="text-sm text-gray-500 mt-0">
+          만들면서 고민하고 공부한 것들을 기록합니다. 연구 이야기는{" "}
+          <a href="https://dongho-seo.me" target="_blank">
+            dongho-seo.me
+          </a>
+          에 있어요.
+        </p>
+        {getHomeEntries().map((entry) =>
+          entry.type === "series" ? (
+            <SeriesListItem key={entry.series.slug} series={entry.series} />
+          ) : (
+            <PostListItem key={entry.post.slug} post={entry.post} />
+          ),
+        )}
+        {archivedPosts.length > 0 && (
+          <p className="text-sm mt-8">
             <Link
-              href={post.slug}
-              className="text-sm no-underline hover:underline underline-offset-2 decoration-cyan-500 decoration-2"
+              href="/archive"
+              className="text-gray-500 no-underline hover:underline"
             >
-              <h3 className="font-medium mb-0.5">{post.title}</h3>
-              {post.description && (
-                <p className="font-medium text-gray-500 mb-2">
-                  {post.description}
-                </p>
-              )}
-              {post.createdAt && (
-                <p className="text-xs mt-0 text-gray-500 flex align-middle gap-2">
-                  <span>{format(parseISO(post.createdAt), "yyyy-MM-dd")}</span>|{" "}
-                  <span>{post.category}</span>
-                  {post.timesToRead && (
-                    <>
-                      |{" "}
-                      <span className="flex align-middle gap-1">
-                        <span className="flex flex-col justify-center">
-                          <ClockIcon />
-                        </span>
-                        <span>{post.timesToRead}min</span>
-                      </span>
-                    </>
-                  )}
-                </p>
-              )}
+              예전 글 보기 ({archivedPosts.length}) →
             </Link>
-          </article>
-        ))}
+          </p>
+        )}
       </section>
     </div>
   );

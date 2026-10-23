@@ -71,8 +71,10 @@ function useReadingState(headings: HeadingProps[]) {
 
 export default function TableOfContents({
   headings,
+  title = "목차",
 }: {
   headings: HeadingProps[];
+  title?: string;
 }) {
   const { activeIndex, progress, scrollingUp } = useReadingState(headings);
   const [open, setOpen] = useState(false);
@@ -153,7 +155,7 @@ export default function TableOfContents({
         className="fixed left-[calc(50%+23rem)] top-24 hidden w-52 text-xs xl:block"
       >
         <p className="mb-2 font-medium text-slate-900 dark:text-slate-100">
-          목차
+          {title}
         </p>
         <ul
           ref={sideListRef}
@@ -197,7 +199,7 @@ export default function TableOfContents({
             className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm"
           >
             <span className="flex-1 truncate">
-              {activeIndex >= 0 ? headings[activeIndex].text : "목차"}
+              {activeIndex >= 0 ? headings[activeIndex].text : title}
             </span>
             <ChevronDownIcon
               className={`shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
