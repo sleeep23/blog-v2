@@ -85,6 +85,10 @@
   details {
     @apply mb-6;
   }
+  /* Leave room for the mobile ToC bar when jumping to a heading */
+  .prose :is(h1, h2, h3)[id] {
+    @apply scroll-mt-16;
+  }
 }
 
 @layer katex {

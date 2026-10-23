@@ -53,7 +53,11 @@ export default async function PostPage({ params }: PostProps) {
     notFound();
   }
   return (
-    <article className="relative ">
+    <article className="relative">
+      {/* Rendered first so the mobile bar can stick across the whole article */}
+      {post.toc && post.headings.length > 0 && (
+        <TableOfContents headings={post.headings} />
+      )}
       <div
         className="py-6 prose dark:prose-invert leading-relaxed prose-h1:text-2xl prose-a:break-all prose-code:text-cyan-600 dark:prose-code:text-cyan-500 break-keep prose-img:mx-auto
     prose-code:overflow-auto katex-display:katex prose-a:prose-cyan"
@@ -81,11 +85,6 @@ export default async function PostPage({ params }: PostProps) {
         <Mdx code={post.body.code} />
         <Comment />
       </div>
-      {post.headings.length !== 0 ? (
-        <TableOfContents headings={post.headings} />
-      ) : (
-        <></>
-      )}
     </article>
   );
 }
