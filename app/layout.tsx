@@ -7,6 +7,7 @@ import { Analytics } from "@/components/analytics";
 import { ModeToggle } from "@/components/mode-toggle";
 import Github from "@/components/icons/github";
 import Homepage from "@/components/icons/homepage";
+import LinkedIn from "@/components/icons/linkedin";
 import Mail from "@/components/icons/mail";
 import {
   LanguageNav,
@@ -63,6 +64,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                   <nav className="flex">
                     <Homepage />
                     <Github />
+                    <LinkedIn />
                     <Mail />
                     <LanguageToggle counterparts={getCounterparts()} />
                     <ModeToggle />
